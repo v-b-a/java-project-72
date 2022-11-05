@@ -9,8 +9,7 @@ public class App {
         app.start(getPort());
     }
     public static Javalin getApp() {
-        // Создаём приложение
-        // Включаем логгирование
+        //Создаём приложение, Включаем логгирование
         Javalin app = Javalin.create(JavalinConfig::enableDevLogging);
         // Добавляем маршруты в приложение
         addRoutes(app);
