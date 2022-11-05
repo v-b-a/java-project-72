@@ -1,6 +1,5 @@
-.DEFAULT_GOAL := build-run
-run-dist:
-	./build/install/app/bin/app
+setup:
+	gradle wrapper --gradle-version 7.4
 
 clean:
 	./gradlew clean
@@ -8,11 +7,20 @@ clean:
 build:
 	./gradlew clean build
 
-install:
-	./gradlew clean install
+start:
+	APP_ENV=development ./gradlew run
 
-run:
-	./gradlew run
+install:
+	./gradlew install
+
+start-dist:
+	APP_ENV=production ./build/install/java-javalin-blog/bin/java-javalin-blog
+
+generate-migrations:
+	./gradlew generateMigrations
+
+lint:
+	./gradlew checkstyleMain checkstyleTest
 
 test:
 	./gradlew test
@@ -20,13 +28,13 @@ test:
 report:
 	./gradlew jacocoTestReport
 
-lint:
-	./gradlew checkstyleMain checkstyleTest
+check-updates:
+	./gradlew dependencyUpdates
 
-update-deps:
-	./gradlew useLatestVersions
+image-build:
+	docker build -t hexletcomponents/java-javalin-blog:latest .
 
-
-build-run: build run
+image-push:
+	docker push hexletcomponents/java-javalin-blog:latest
 
 .PHONY: build

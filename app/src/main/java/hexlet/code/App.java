@@ -2,9 +2,6 @@ package hexlet.code;
 
 import io.javalin.Javalin;
 import io.javalin.core.JavalinConfig;
-import io.javalin.plugin.rendering.template.JavalinThymeleaf;
-
-import static io.javalin.apibuilder.ApiBuilder.*;
 
 public class App {
     public static void main(String[] args) {
