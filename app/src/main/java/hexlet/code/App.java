@@ -1,7 +1,7 @@
 package hexlet.code;
 
+import hexlet.code.controllers.RootController;
 import io.javalin.Javalin;
-import io.javalin.core.JavalinConfig;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.thymeleaf.TemplateEngine;
@@ -30,9 +30,7 @@ public class App {
 
         // Обработчик before запускается перед каждым запросом
         // Устанавливаем атрибут ctx для запросов
-        app.before(ctx -> {
-            ctx.attribute("ctx", ctx);
-        });
+        app.before(ctx -> ctx.attribute("ctx", ctx));
         return app;
     }
 
@@ -62,7 +60,7 @@ public class App {
     }
     private static void addRoutes(Javalin app) {
         // Для GET-запроса на маршрут / будет выполняться
-        app.get("/", ctx -> ctx.result("Hello World2"));
+        app.get("/", RootController.mainPage);
 
 //        app.get("/about", RootController.about);
 //
