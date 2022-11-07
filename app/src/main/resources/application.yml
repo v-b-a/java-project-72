@@ -1,0 +1,23 @@
+# Настройки ORM
+datasource:
+  default: ${APP_ENV}
+  # Задаём базу данных, к которой будет происходить подключение
+  development:
+    username: ""
+    password: ""
+    url: "jdbc:h2:./database"
+  production:
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+    url: ${JDBC_DATABASE_URL}
+
+
+# Заполняем базу данных первоначальными данными
+ebean:
+  ddl:
+    run: true
+    generate: true
+    seedSql: seed.sql
+  migration:
+    run: true
+
