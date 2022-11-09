@@ -1,15 +1,19 @@
 # Настройки ORM
 datasource:
-  default: ${APP_ENV}
+#  default: ${APP_ENV}
   # Задаём базу данных, к которой будет происходить подключение
+#  db:
+#    username: ""
+#    password: ""
+#    url: "jdbc:h2:./hexlet"
   development:
-    username: ""
-    password: ""
-    url: "jdbc:h2:./database"
-  production:
-    username: ${JDBC_DATABASE_USERNAME}
-    password: ${JDBC_DATABASE_PASSWORD}
-    url: ${JDBC_DATABASE_URL}
+    username: sa
+    password: sa
+    url: "jdbc:h2:./hexlet"
+#  production:
+#    username: ${JDBC_DATABASE_USERNAME}
+#    password: ${JDBC_DATABASE_PASSWORD}
+#    url: ${JDBC_DATABASE_URL}
 
 
 # Заполняем базу данных первоначальными данными
@@ -18,6 +22,4 @@ ebean:
     run: true
     generate: true
     seedSql: seed.sql
-  migration:
-    run: true
 

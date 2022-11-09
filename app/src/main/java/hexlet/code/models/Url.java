@@ -5,7 +5,7 @@ import io.ebean.annotation.WhenCreated;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.sql.Timestamp;
+import java.time.Instant;
 
 @Entity
 public class Url extends Model {
@@ -15,5 +15,24 @@ public class Url extends Model {
     private String name;
 
     @WhenCreated
-    private Timestamp createAt;
+    private Instant createAt;
+
+    public Url(String name) {
+        this.name = name;
+    }
+
+    public Url() {
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Instant getCreateAt() {
+        return createAt;
+    }
 }
