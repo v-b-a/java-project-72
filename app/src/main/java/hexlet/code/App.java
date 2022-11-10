@@ -27,15 +27,7 @@ public class App {
             config.enableWebjars();
             JavalinThymeleaf.configure(getTemplateEngine());
         });
-
-
-        //Создаём приложение, Включаем логгирование
-//        Javalin app = Javalin.create(JavalinConfig::enableDevLogging);
-        // Добавляем маршруты в приложение
         addRoutes(app);
-
-        // Обработчик before запускается перед каждым запросом
-        // Устанавливаем атрибут ctx для запросов
         app.before(ctx -> ctx.attribute("ctx", ctx));
         return app;
     }
@@ -71,6 +63,7 @@ public class App {
         app.routes(() -> path("urls", () -> {
             get(UrlController.getUrlsList);
             post(UrlController.addUrl);
+            get("{id}", UrlController.showUrl);
         }));
 
     }

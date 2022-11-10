@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/application.html}" lang="ru">
+<head>
+  <title>Сайт</title>
+</head>
+<section layout:fragment="content">
+  <h1>Проверенный сайт</h1>
+  <div class="card" th:object="${url}">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item" th:text="'Id: ' + *{id}"></li>
+      <li class="list-group-item" th:text="'Адрес: ' + *{name}"></li>
+      <li class="list-group-item" th:text="'Дата проверки: ' + *{createAt}"></li>
+    </ul>
+  </div>
+</section>
