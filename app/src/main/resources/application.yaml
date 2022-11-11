@@ -7,11 +7,11 @@ datasource:
     password: sa
     url: "jdbc:h2:./hexlet"
   production:
-    username: ${PGUSER}
-    password: ${PGPASSWORD}
+#    username: ${PGUSER}
+#    password: ${PGPASSWORD}
     url: ${DATABASE_URL}
-    port: ${PGPORT}
-    host: ${PGHOST}
+#    port: ${PGPORT}
+#    host: ${PGHOST}
 # Заполняем базу данных первоначальными данными
 ebean:
   migration:
