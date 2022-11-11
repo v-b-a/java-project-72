@@ -24,12 +24,12 @@ public final class UrlController {
         }
         String partOfUrl = url.getHost();
         Url newUrl = new Url(partOfUrl);
-//        if (urlIsAvailable(partOfUrl)) {
-//            ctx.sessionAttribute("flash", "Страница уже существует");
-//            ctx.sessionAttribute("flash-type", "danger");
-//            ctx.redirect("/");
-//            return;
-//        }
+        if (urlIsAvailable(partOfUrl)) {
+            ctx.sessionAttribute("flash", "Этот сайт уже существует");
+            ctx.sessionAttribute("flash-type", "danger");
+            ctx.redirect("/");
+            return;
+        }
         newUrl.save();
         ctx.sessionAttribute("flash", "Страница успешно добавлена");
         ctx.sessionAttribute("flash-type", "success");
