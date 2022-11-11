@@ -10,6 +10,8 @@ datasource:
     username: ${PGUSER}
     password: ${PGPASSWORD}
     url: ${DATABASE_URL}
+    port: ${PGPORT}
+    host: ${PGHOST}
 # Заполняем базу данных первоначальными данными
 ebean:
   migration:
