@@ -1,6 +1,6 @@
 # Настройки ORM
 datasource:
-  default: ${APP_ENV}
+#  default: ${APP_ENV}
   # Задаём базу данных, к которой будет происходить подключение
   development:
     username: sa
