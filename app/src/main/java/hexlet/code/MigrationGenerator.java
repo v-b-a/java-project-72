@@ -10,8 +10,8 @@ public class MigrationGenerator {
         // Создаём миграцию
         DbMigration dbMigration = DbMigration.create();
         // Указываем платформу, в нашем случае H2
-//        dbMigration.addPlatform(Platform.POSTGRES, "postgres");
         dbMigration.addPlatform(Platform.H2, "h2");
+        dbMigration.addPlatform(Platform.POSTGRES, "postgres");
         // Генерируем миграцию
         dbMigration.generateMigration();
     }

@@ -12,10 +12,6 @@ datasource:
     url: ${JDBC_DATABASE_URL}
 # Заполняем базу данных первоначальными данными
 ebean:
-#  ddl:
-#    run: true
-#    generate: true
-#    seedSql: seed.sql
   migration:
     run: true
 
