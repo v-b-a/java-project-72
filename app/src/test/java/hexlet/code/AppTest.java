@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Nested;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class AppTest {
-    private final int RESPONSE_CODE_200 = 200;
-    private final int RESPONSE_CODE_302 = 302;
+    private final int responseCode200 = 200;
+    private final int responseCode302 = 302;
 
     @Test
     void testInit() {
@@ -53,7 +53,7 @@ public final class AppTest {
         @Test
         void testIndex() {
             HttpResponse<String> response = Unirest.get(baseUrl).asString();
-            assertThat(response.getStatus()).isEqualTo(RESPONSE_CODE_200);
+            assertThat(response.getStatus()).isEqualTo(responseCode200);
             assertThat(response.getBody()).contains("Анализатор web-сайтов");
         }
 
@@ -64,7 +64,7 @@ public final class AppTest {
                     .asString();
             String body = response.getBody();
 
-            assertThat(response.getStatus()).isEqualTo(RESPONSE_CODE_200);
+            assertThat(response.getStatus()).isEqualTo(responseCode200);
             assertThat(body).contains("Список проверок");
         }
 
@@ -77,7 +77,7 @@ public final class AppTest {
                     .field("url", inputUrl)
                     .asEmpty();
 
-            assertThat(responsePost.getStatus()).isEqualTo(RESPONSE_CODE_302);
+            assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
             assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
 
             HttpResponse<String> response = Unirest
@@ -85,7 +85,7 @@ public final class AppTest {
                     .asString();
             String body = response.getBody();
 
-            assertThat(response.getStatus()).isEqualTo(RESPONSE_CODE_200);
+            assertThat(response.getStatus()).isEqualTo(responseCode200);
             assertThat(body).contains(splitUrl);
             assertThat(body).contains("Страница успешно добавлена");
 
@@ -105,13 +105,13 @@ public final class AppTest {
                     .field("url", incorrectValue1)
                     .asEmpty();
 
-            assertThat(responsePost.getStatus()).isEqualTo(RESPONSE_CODE_302);
+            assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
             HttpResponse<String> response = Unirest
                     .get(baseUrl)
                     .asString();
             String body = response.getBody();
 
-            assertThat(response.getStatus()).isEqualTo(RESPONSE_CODE_200);
+            assertThat(response.getStatus()).isEqualTo(responseCode200);
             assertThat(body).contains("Некорректный URL");
         }
 
@@ -123,21 +123,21 @@ public final class AppTest {
                     .field("url", correctValue)
                     .asEmpty();
 
-            assertThat(responsePost.getStatus()).isEqualTo(RESPONSE_CODE_302);
+            assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
 
             HttpResponse repeatPost = Unirest
                     .post(baseUrl + "/urls")
                     .field("url", correctValue)
                     .asEmpty();
 
-            assertThat(repeatPost.getStatus()).isEqualTo(RESPONSE_CODE_302);
+            assertThat(repeatPost.getStatus()).isEqualTo(responseCode302);
 
             HttpResponse<String> response = Unirest
                     .get(baseUrl)
                     .asString();
             String body = response.getBody();
 
-            assertThat(response.getStatus()).isEqualTo(RESPONSE_CODE_200);
+            assertThat(response.getStatus()).isEqualTo(responseCode200);
             assertThat(body).contains("Этот сайт уже существует");
         }
     }
