@@ -48,6 +48,12 @@ public final class AppTest {
         database.script().run("/truncate.sql");
     }
 
+    @Test
+    void testApp() {
+        int port = app.port();
+        assertThat(port).isNotNull();
+    }
+
     @Nested
     class UrlTest {
         @Test
