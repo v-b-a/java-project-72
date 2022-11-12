@@ -7,11 +7,18 @@ import io.ebean.Database;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Nested;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AppTest {
+public final class AppTest {
+    private final int RESPONSE_CODE_200 = 200;
+    private final int RESPONSE_CODE_302 = 302;
+
     @Test
     void testInit() {
         assertThat(true).isEqualTo(true);
@@ -46,7 +53,7 @@ public class AppTest {
         @Test
         void testIndex() {
             HttpResponse<String> response = Unirest.get(baseUrl).asString();
-            assertThat(response.getStatus()).isEqualTo(200);
+            assertThat(response.getStatus()).isEqualTo(RESPONSE_CODE_200);
             assertThat(response.getBody()).contains("Анализатор web-сайтов");
         }
 
@@ -57,7 +64,7 @@ public class AppTest {
                     .asString();
             String body = response.getBody();
 
-            assertThat(response.getStatus()).isEqualTo(200);
+            assertThat(response.getStatus()).isEqualTo(RESPONSE_CODE_200);
             assertThat(body).contains("Список проверок");
         }
 
@@ -65,12 +72,12 @@ public class AppTest {
         void testCreate() {
             String inputUrl = "https://www.google.ru/webhp?authuser=1";
             String splitUrl = "www.google.ru";
-                HttpResponse responsePost = Unirest
+            HttpResponse responsePost = Unirest
                     .post(baseUrl + "/urls")
                     .field("url", inputUrl)
                     .asEmpty();
 
-            assertThat(responsePost.getStatus()).isEqualTo(302);
+            assertThat(responsePost.getStatus()).isEqualTo(RESPONSE_CODE_302);
             assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
 
             HttpResponse<String> response = Unirest
@@ -78,7 +85,7 @@ public class AppTest {
                     .asString();
             String body = response.getBody();
 
-            assertThat(response.getStatus()).isEqualTo(200);
+            assertThat(response.getStatus()).isEqualTo(RESPONSE_CODE_200);
             assertThat(body).contains(splitUrl);
             assertThat(body).contains("Страница успешно добавлена");
 
@@ -89,6 +96,7 @@ public class AppTest {
             assertThat(url1).isNotNull();
             assertThat(url1.getName()).isEqualTo(splitUrl);
         }
+
         @Test
         void testIncorrectUrl() {
             String incorrectValue1 = "tree";
@@ -97,15 +105,16 @@ public class AppTest {
                     .field("url", incorrectValue1)
                     .asEmpty();
 
-            assertThat(responsePost.getStatus()).isEqualTo(302);
+            assertThat(responsePost.getStatus()).isEqualTo(RESPONSE_CODE_302);
             HttpResponse<String> response = Unirest
                     .get(baseUrl)
                     .asString();
             String body = response.getBody();
 
-            assertThat(response.getStatus()).isEqualTo(200);
+            assertThat(response.getStatus()).isEqualTo(RESPONSE_CODE_200);
             assertThat(body).contains("Некорректный URL");
         }
+
         @Test
         void repeatUrl() {
             String correctValue = "https://www.google.ru/webhp?authuser=1";
@@ -114,21 +123,21 @@ public class AppTest {
                     .field("url", correctValue)
                     .asEmpty();
 
-            assertThat(responsePost.getStatus()).isEqualTo(302);
+            assertThat(responsePost.getStatus()).isEqualTo(RESPONSE_CODE_302);
 
             HttpResponse repeatPost = Unirest
                     .post(baseUrl + "/urls")
                     .field("url", correctValue)
                     .asEmpty();
 
-            assertThat(repeatPost.getStatus()).isEqualTo(302);
+            assertThat(repeatPost.getStatus()).isEqualTo(RESPONSE_CODE_302);
 
             HttpResponse<String> response = Unirest
                     .get(baseUrl)
                     .asString();
             String body = response.getBody();
 
-            assertThat(response.getStatus()).isEqualTo(200);
+            assertThat(response.getStatus()).isEqualTo(RESPONSE_CODE_200);
             assertThat(body).contains("Этот сайт уже существует");
         }
     }

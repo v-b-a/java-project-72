@@ -26,7 +26,7 @@ test:
 	APP_ENV=development ./gradlew test
 
 report:
-	./gradlew jacocoTestReport
+	APP_ENV=development ./gradlew jacocoTestReport
 
 check-updates:
 	./gradlew dependencyUpdates
