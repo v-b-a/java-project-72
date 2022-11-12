@@ -2,15 +2,44 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/application.html}" lang="ru">
 <head>
-  <title>Сайт</title>
+    <title>Сайт</title>
 </head>
 <section layout:fragment="content">
-  <h1>Проверенный сайт</h1>
-  <div class="card" th:object="${url}">
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item" th:text="'Id: ' + *{id}"></li>
-      <li class="list-group-item" th:text="'Адрес: ' + *{name}"></li>
-      <li class="list-group-item" th:text="'Дата проверки: ' + *{createAt}"></li>
-    </ul>
-  </div>
+    <h1>Сайт</h1>
+    <div class="card" th:object="${url}">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item" th:text="'Id: ' + *{id}"></li>
+            <li class="list-group-item" th:text="'Адрес: ' + *{name}"></li>
+            <li class="list-group-item" th:text="'Дата проверки: ' + *{createAt}"></li>
+        </ul>
+
+        <form th:action="@{/urls/{id}/checks(id=*{id})}" method="post">
+            <button type="submit" class="btn btn-danger">Проверить</button>
+        </form>
+    </div>
+    <div>
+        <h1>Проверка</h1>
+        <table class="table table-striped mt-5">
+            <thead>
+            <tr>
+                <th class="col-1">ID</th>
+                <th class="col-2">Код ответа</th>
+                <th class="col-3">Title</th>
+                <th class="col-4">H1</th>
+                <th class="col-5">Описание</th>
+                <th class="col-6">Дата проверки</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="urlCheck : ${checkList}" th:object="${urlCheck}">
+                <td th:text="*{id}"></td>
+                <td th:text="*{statusCode}"></td>
+                <td th:text="*{title}"></td>
+                <td th:text="*{h1}"></td>
+                <td th:text="*{description}"></td>
+                <td th:text="*{createdAt}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </section>

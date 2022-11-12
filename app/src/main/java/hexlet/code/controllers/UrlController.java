@@ -2,7 +2,9 @@ package hexlet.code.controllers;
 
 
 import hexlet.code.models.Url;
+import hexlet.code.models.UrlCheck;
 import hexlet.code.models.query.QUrl;
+import hexlet.code.models.query.QUrlCheck;
 import io.javalin.http.Handler;
 
 import java.net.URL;
@@ -57,7 +59,15 @@ public final class UrlController {
         Url url = new QUrl()
                 .id.equalTo(id)
                 .findOne();
+
+        List<UrlCheck> checkList = new QUrlCheck()
+                .url.equalTo(url)
+                .orderBy()
+                .findList();
+
         ctx.attribute("url", url);
+        ctx.attribute("checkList", checkList);
+
         ctx.render("show.html");
     };
 }

@@ -45,6 +45,17 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.22.0'
     testImplementation 'io.ebean:ebean-test:12.15.1'
     testImplementation 'com.konghq:unirest-java:3.13.6'
+    implementation 'com.konghq:unirest-java:3.11.09'
+
+    //Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.24'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
+
 
 }
 

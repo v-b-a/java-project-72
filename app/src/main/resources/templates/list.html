@@ -6,15 +6,20 @@
 </head>
 
 <section layout:fragment="content">
-    <table class="table">
+    <h1>Сайты для проверки</h1>
+    <table class="table table-striped mt-5">
         <thead>
-        <th>ID</th>
-        <th>Адрес</th>
+        <tr>
+            <th class="col-1">ID</th>
+            <th class="col-2">Адрес</th>
+        </tr>
         </thead>
         <tbody>
         <tr th:each="url : ${urls}" th:object="${url}">
             <td th:text="*{id}"></td>
-            <td th:text="*{name}"></td>
+            <td>
+                <a th:href="@{/urls/{id}(id=*{getId()})}" th:text="${#strings.abbreviate(url.getName(), 30)}"></a>
+            </td>
         </tr>
     </table>
 </section>
