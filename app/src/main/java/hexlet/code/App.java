@@ -60,11 +60,11 @@ public class App {
     }
 
     private static void addRoutes(Javalin app) {
-        app.get("/", RootController.mainPage);
+        app.get("/", RootController.MAIN_PAGE);
         app.routes(() -> path("urls", () -> {
-            get(UrlController.getUrlsList);
-            post(UrlController.addUrl);
-            get("{id}", UrlController.showUrl);
+            get(UrlController.GET_URLS_LIST);
+            post(UrlController.ADD_URL);
+            get("{id}", UrlController.SHOW_URL);
         }));
 
     }

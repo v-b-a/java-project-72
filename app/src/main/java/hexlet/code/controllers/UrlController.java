@@ -9,7 +9,7 @@ import java.net.URL;
 import java.util.List;
 
 public final class UrlController {
-    public static Handler addUrl = ctx -> {
+    public final static Handler ADD_URL = ctx -> {
         String fullUrl = ctx.formParam("url");
         URL url;
         try {
@@ -44,7 +44,7 @@ public final class UrlController {
         return url1 != 0;
     }
 
-    public static Handler getUrlsList = ctx -> {
+    public final static Handler GET_URLS_LIST = ctx -> {
         List<Url> urlList = new QUrl()
                 .orderBy()
                 .id.asc()
@@ -52,7 +52,7 @@ public final class UrlController {
         ctx.attribute("urls", urlList);
         ctx.render("list.html");
     };
-    public static Handler showUrl = ctx -> {
+    public final static Handler SHOW_URL = ctx -> {
         long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
         Url url = new QUrl()
                 .id.equalTo(id)

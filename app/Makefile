@@ -23,7 +23,7 @@ lint:
 	./gradlew checkstyleMain checkstyleTest
 
 test:
-	./gradlew test
+	APP_ENV=development ./gradlew test
 
 report:
 	./gradlew jacocoTestReport

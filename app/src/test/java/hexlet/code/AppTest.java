@@ -65,7 +65,7 @@ public class AppTest {
         void testCreate() {
             String inputUrl = "https://www.google.ru/webhp?authuser=1";
             String splitUrl = "www.google.ru";
-            HttpResponse responsePost = Unirest
+                HttpResponse responsePost = Unirest
                     .post(baseUrl + "/urls")
                     .field("url", inputUrl)
                     .asEmpty();
