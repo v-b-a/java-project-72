@@ -12,6 +12,7 @@
         <tr>
             <th class="col-1">ID</th>
             <th class="col-2">Адрес</th>
+            <th class="col-2">Дата добавления</th>
         </tr>
         </thead>
         <tbody>
@@ -20,6 +21,7 @@
             <td>
                 <a th:href="@{/urls/{id}(id=*{getId()})}" th:text="${#strings.abbreviate(url.getName(), 30)}"></a>
             </td>
+            <td th:text="*{createAt}"></td>
         </tr>
     </table>
 </section>
