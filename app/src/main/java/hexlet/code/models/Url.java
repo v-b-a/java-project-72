@@ -30,22 +30,9 @@ public final class Url extends Model {
     private Instant createAt;
 
     @OneToMany(cascade = CascadeType.ALL)
-    List<UrlCheck> urlCheckList;
+    private List<UrlCheck> urlCheckList;
 
     public Url(String url) {
         this.name = url;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Url url = (Url) o;
-        return id == url.id && Objects.equals(name, url.name) && Objects.equals(createAt, url.createAt) && Objects.equals(urlCheckList, url.urlCheckList);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, createAt, urlCheckList);
     }
 }

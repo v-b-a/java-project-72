@@ -4,7 +4,6 @@ import hexlet.code.controllers.CheckController;
 import hexlet.code.controllers.RootController;
 import hexlet.code.controllers.UrlController;
 import io.javalin.Javalin;
-import io.javalin.http.Handler;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.thymeleaf.TemplateEngine;
@@ -68,7 +67,7 @@ public class App {
             post(UrlController.ADD_URL);
             path("/{id}", () -> {
                 get(UrlController.SHOW_URL);
-                post("/checks",CheckController.CHECK_URL);
+                post("/checks", CheckController.CHECK_URL);
             });
         }));
 
