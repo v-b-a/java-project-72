@@ -9,7 +9,12 @@ import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.*;
+import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Nested;
 
 import java.io.IOException;
 
@@ -18,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public final class AppTest {
     private final int responseCode200 = 200;
     private final int responseCode302 = 302;
-    static MockWebServer server = new MockWebServer();
+    private static MockWebServer server = new MockWebServer();
 
 
     @Test
@@ -42,8 +47,8 @@ public final class AppTest {
 
         MockResponse response = new MockResponse()
                 .setHeader("title", "some title")
-                .setBody("{ " +
-                        "<!DOCTYPE html>\n"
+                .setBody("{ "
+                        + "<!DOCTYPE html>\n"
                         + "<html>\n"
                         + "<head>"
                         + "<title>some title</title>"
@@ -77,7 +82,7 @@ public final class AppTest {
     void beforeEach() throws IOException {
 //        database.script().run("/truncate.sql");
         int url1 = new QUrl()
-                .id.between(1,Integer.MAX_VALUE)
+                .id.between(1, Integer.MAX_VALUE)
                 .delete();
 
     }
