@@ -14,7 +14,10 @@ install:
 	./gradlew install
 
 start-dist:
-	APP_ENV=production ./build/install/app/bin/app
+	./build/install/app/bin/app
+
+#APP_ENV=production
+#APP_ENV=development
 
 generate-migrations:
 	./gradlew generateMigrations
