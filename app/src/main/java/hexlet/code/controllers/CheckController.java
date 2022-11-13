@@ -31,9 +31,9 @@ public class CheckController {
             h1 = html.body().getElementsByTag("h1").first().text();
         }
         String description = "-";
-        if (html.body().getElementsByClass("description").first() != null) {
-//            description = html.body().getElementsByClass("description").first().text();
-            description = "some description";
+        if (html.body().getElementsByClass("meta").attr("description") != null) {
+            description = html.body().getElementsByClass("meta").attr("description");
+//            description = "some description";
         }
 
         UrlCheck urlCheck = new UrlCheck(response.getStatus(), title, h1,
