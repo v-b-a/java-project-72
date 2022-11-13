@@ -2,9 +2,7 @@ package hexlet.code.models;
 
 import io.ebean.Model;
 import io.ebean.annotation.WhenCreated;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.CascadeType;
