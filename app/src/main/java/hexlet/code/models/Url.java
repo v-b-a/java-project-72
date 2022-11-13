@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @AllArgsConstructor
