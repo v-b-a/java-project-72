@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -28,7 +29,7 @@ public final class Url extends Model {
     @WhenCreated
     private Instant createAt;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     List<UrlCheck> urlCheckList;
 
     public Url(String url) {

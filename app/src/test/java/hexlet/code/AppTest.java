@@ -1,23 +1,29 @@
 package hexlet.code;
 
 import hexlet.code.models.Url;
+import hexlet.code.models.UrlCheck;
 import hexlet.code.models.query.QUrl;
+import hexlet.code.models.query.QUrlCheck;
 import io.ebean.DB;
 import io.ebean.Database;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Nested;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.*;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class AppTest {
     private final int responseCode200 = 200;
     private final int responseCode302 = 302;
+    static MockWebServer server = new MockWebServer();
+
 
     @Test
     void testInit() {
@@ -28,6 +34,7 @@ public final class AppTest {
     private static String baseUrl;
     private static Url url;
     private static Database database;
+    private static String testUrl;
 
     @BeforeAll
     public static void beforeAll() {
@@ -36,6 +43,33 @@ public final class AppTest {
         int port = app.port();
         baseUrl = "http://localhost:" + port;
         database = DB.getDefault();
+
+        MockResponse response = new MockResponse()
+                .setHeader("title", "some title")
+                .setBody("{ " +
+                        "<!DOCTYPE html>\n" +
+                        "<html>\n" +
+                        "<head>" +
+                        "<title>some title</title>" +
+                        "</head>" +
+                        "<body>\n" +
+                        "\n" +
+                        "<h1>some h1</h1>\n" +
+                        "\n" +
+                        "<p >My first paragraph.</p>\n" +
+                        "<meta\n" +
+                        "  name=\"description\"\n" +
+                        "  content=\"The MDN Web Docs Learning Area aims to provide\n" +
+                        "complete beginners to the Web with all they need to know to get\n" +
+                        "started with developing web sites and applications.\" />" +
+                        "</body>\n" +
+                        "</html>\n" +
+                        "<h1>some<h1>" +
+                        "}");
+
+        testUrl = server.url("/").toString();
+        server.enqueue(response);
+//        server.start();
     }
 
     @AfterAll
@@ -44,8 +78,16 @@ public final class AppTest {
     }
 
     @BeforeEach
-    void beforeEach() {
-        database.script().run("/truncate.sql");
+    void beforeEach() throws IOException {
+//        database.script().run("/truncate.sql");
+        int url1 = new QUrl()
+                .id.between(1,10000)
+                .delete();
+
+    }
+    @AfterEach
+    public void afterEach() throws IOException {
+        server.shutdown();
     }
 
     @Test
@@ -147,5 +189,33 @@ public final class AppTest {
             assertThat(body).contains("Этот сайт уже существует");
         }
     }
+//    @Test
+//    void addCheckTest() throws MalformedURLException {
+//
+//        HttpResponse responsePost = Unirest
+//                .post(baseUrl + "/urls")
+//                .field("url", testUrl)
+//                .asEmpty();
+//        String host = new URL(testUrl).getHost();
+//        int port = new URL(testUrl).getPort();
+//
+//        Url url1 = new QUrl()
+//                .name.equalTo(host)
+//                .findOne();
+//        assert url1 != null;
+//        long urlId = url1.getId();
+//        HttpResponse responsePost2 = Unirest
+//                .post(baseUrl + "/urls/" + urlId +"/checks")
+//                .field("url", url1)
+//                .asEmpty();
+//
+//        UrlCheck urlCheck = new QUrlCheck()
+//                .url.equalTo(url1)
+//                .findOne();
+//        assertThat(urlCheck).isNotNull();
+//        assertThat(urlCheck.getUrl()).isEqualTo(url1);
+//        assertThat(urlCheck.getTitle()).isEqualTo("some title");
+//        assertThat(urlCheck.getH1()).isEqualTo("some h1");
+//    }
 
 }
