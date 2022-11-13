@@ -15,8 +15,6 @@ import java.time.Instant;
 import java.util.List;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Setter
 @Getter
 public final class Url extends Model {

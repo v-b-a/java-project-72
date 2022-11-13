@@ -8,13 +8,13 @@ build:
 	./gradlew clean build
 
 start:
-	./gradlew run
+	APP_ENV=development ./gradlew run
 
 install:
 	./gradlew install
 
 start-dist:
-	./build/install/app/bin/app
+	APP_ENV=production ./build/install/app/bin/app
 
 #APP_ENV=production
 #APP_ENV=development
