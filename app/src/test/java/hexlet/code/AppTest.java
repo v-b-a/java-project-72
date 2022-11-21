@@ -1,6 +1,6 @@
 package hexlet.code;
 
-import hexlet.code.models.Url;
+import hexlet.code.domain.Url;
 import hexlet.code.models.query.QUrl;
 import io.ebean.DB;
 import io.ebean.Database;

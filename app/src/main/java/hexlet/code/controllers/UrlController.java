@@ -1,10 +1,11 @@
 package hexlet.code.controllers;
 
 
-import hexlet.code.models.Url;
-import hexlet.code.models.UrlCheck;
+import hexlet.code.domain.Url;
+import hexlet.code.domain.UrlCheck;
 import hexlet.code.models.query.QUrl;
 import hexlet.code.models.query.QUrlCheck;
+import io.ebean.PagedList;
 import io.javalin.http.Handler;
 
 import java.net.URL;
@@ -14,19 +15,16 @@ public final class UrlController {
     public static final Handler ADD_URL = ctx -> {
         String fullUrl = ctx.formParam("url");
         URL url;
-        try {
-            assert fullUrl != null;
-            url = new URL(fullUrl);
-
-        } catch (Exception e) {
+        if (fullUrl == null) {
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect("/");
             return;
         }
-        String partOfUrl = url.getHost();
-        Url newUrl = new Url(partOfUrl);
-        if (urlIsAvailable(partOfUrl)) {
+        url = new URL(fullUrl);
+        String normalizedUrl = url.getProtocol() + "://" + url.getHost() + ":" +url.getPort();
+        Url newUrl = new Url(normalizedUrl);
+        if (urlIsAvailable(normalizedUrl)) {
             ctx.sessionAttribute("flash", "Этот сайт уже существует");
             ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect("/");
@@ -47,10 +45,14 @@ public final class UrlController {
     }
 
     public static final Handler GET_URLS_LIST = ctx -> {
-        List<Url> urlList = new QUrl()
+        int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1);
+        int rowsPerPage = 10;
+        PagedList<Url> urlList = new QUrl()
+                .setFirstRow(page * rowsPerPage)
+                .setMaxRows(rowsPerPage)
                 .orderBy()
                 .id.asc()
-                .findList();
+                .findPagedList();
         ctx.attribute("urls", urlList);
         ctx.render("list.html");
     };
