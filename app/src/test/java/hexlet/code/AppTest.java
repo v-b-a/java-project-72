@@ -1,17 +1,13 @@
 package hexlet.code;
 
-import hexlet.code.domain.Url;
-import hexlet.code.models.query.QUrl;
+import hexlet.code.model.Url;
+import hexlet.code.model.query.QUrl;
 import io.ebean.DB;
 import io.ebean.Database;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public final class AppTest {
     private final int responseCode200 = 200;
     private final int responseCode302 = 302;
+
     @Test
     void testInit() {
         assertThat(true).isEqualTo(true);
@@ -45,10 +42,12 @@ public final class AppTest {
 
     @BeforeEach
     void beforeEach() {
-//        database.script().run("/truncate.sql");
-        int url1 = new QUrl()
-                .id.between(1, Integer.MAX_VALUE)
-                .delete();
+        database.beginTransaction();
+    }
+
+    @AfterEach
+    void afterEach() {
+        database.rollbackTransaction();
     }
 
     @Test
@@ -80,14 +79,14 @@ public final class AppTest {
         @Test
         void testCreate() {
             String inputUrl = "https://www.google.ru/webhp?authuser=1";
-            String splitUrl = "www.google.ru";
+            String normalizedUrl = "https://www.google.ru";
             HttpResponse responsePost = Unirest
                     .post(baseUrl + "/urls")
                     .field("url", inputUrl)
                     .asEmpty();
 
             assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
-            assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
+//            assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
 
             HttpResponse<String> response = Unirest
                     .get(baseUrl + "/urls")
@@ -95,20 +94,35 @@ public final class AppTest {
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(responseCode200);
-            assertThat(body).contains(splitUrl);
-            assertThat(body).contains("Страница успешно добавлена");
-
-            Url url1 = new QUrl()
-                    .name.equalTo(splitUrl)
+            Url DBUrl = new QUrl()
+                    .name.equalTo(normalizedUrl)
                     .findOne();
-
-            assertThat(url1).isNotNull();
-            assertThat(url1.getName()).isEqualTo(splitUrl);
+            assertThat(DBUrl).isNotNull();
+            assertThat(DBUrl.getName()).isEqualTo(normalizedUrl);
+//            assertThat(body).contains("Страница успешно добавлена");
         }
 
         @Test
         void testIncorrectUrl() {
             String incorrectValue1 = "tree";
+            HttpResponse responsePost = Unirest
+                    .post(baseUrl + "/urls")
+                    .field("url", incorrectValue1)
+                    .asEmpty();
+
+            assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
+            HttpResponse<String> response = Unirest
+                    .get(baseUrl)
+                    .asString();
+            String body = response.getBody();
+
+            assertThat(response.getStatus()).isEqualTo(responseCode200);
+            assertThat(body).contains("Некорректный URL");
+        }
+
+        @Test
+        void testNullUrl() {
+            String incorrectValue1 = null;
             HttpResponse responsePost = Unirest
                     .post(baseUrl + "/urls")
                     .field("url", incorrectValue1)

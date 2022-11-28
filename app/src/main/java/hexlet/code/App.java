@@ -1,6 +1,5 @@
 package hexlet.code;
 
-import hexlet.code.controllers.CheckController;
 import hexlet.code.controllers.RootController;
 import hexlet.code.controllers.UrlController;
 import io.javalin.Javalin;
@@ -67,7 +66,7 @@ public class App {
             post(UrlController.ADD_URL);
             path("/{id}", () -> {
                 get(UrlController.SHOW_URL);
-                post("/checks", CheckController.CHECK_URL);
+                post("/checks", UrlController.CHECK_URL);
             });
         }));
 
