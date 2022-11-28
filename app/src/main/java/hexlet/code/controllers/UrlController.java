@@ -5,7 +5,6 @@ import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
 import hexlet.code.model.query.QUrl;
 import hexlet.code.model.query.QUrlCheck;
-import io.ebean.PagedList;
 import io.javalin.http.Handler;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -16,6 +15,7 @@ import java.net.URL;
 import java.util.List;
 
 public final class UrlController {
+    private static final int ROWS_PER_PAGE = 10;
     public static final Handler ADD_URL = ctx -> {
         String fullUrl = ctx.formParam("url");
         URL url;
@@ -55,10 +55,9 @@ public final class UrlController {
 
     public static final Handler GET_URLS_LIST = ctx -> {
         int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1);
-        int rowsPerPage = 10;
         List<Url> urlList = new QUrl()
-                .setFirstRow(page * rowsPerPage)
-                .setMaxRows(rowsPerPage)
+                .setFirstRow(page * ROWS_PER_PAGE)
+                .setMaxRows(ROWS_PER_PAGE)
                 .orderBy()
                 .id.asc()
                 .findList();
@@ -87,6 +86,9 @@ public final class UrlController {
         Url url = new QUrl()
                 .id.equalTo(id)
                 .findOne();
+        if (url == null) {
+            ctx.redirect("/");
+        }
 
         HttpResponse<String> response = Unirest
                 .get("https://" + url.getName())
@@ -101,7 +103,6 @@ public final class UrlController {
         String description = "-";
         if (html.body().getElementsByClass("meta").attr("description") != null) {
             description = html.body().getElementsByClass("meta").attr("description");
-//            description = "some description";
         }
 
         UrlCheck urlCheck = new UrlCheck(response.getStatus(), title, h1,
