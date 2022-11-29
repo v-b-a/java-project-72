@@ -7,7 +7,12 @@ import io.ebean.Database;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Nested;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -86,7 +91,7 @@ public final class AppTest {
                     .asEmpty();
 
             assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
-//            assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
+            assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
 
             HttpResponse<String> response = Unirest
                     .get(baseUrl + "/urls")
@@ -94,12 +99,12 @@ public final class AppTest {
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(responseCode200);
-            Url DBUrl = new QUrl()
+            Url dbUrl = new QUrl()
                     .name.equalTo(normalizedUrl)
                     .findOne();
-            assertThat(DBUrl).isNotNull();
-            assertThat(DBUrl.getName()).isEqualTo(normalizedUrl);
-//            assertThat(body).contains("Страница успешно добавлена");
+            assertThat(dbUrl).isNotNull();
+            assertThat(dbUrl.getName()).isEqualTo(normalizedUrl);
+            assertThat(body).containsIgnoringCase("Страница успешно добавлена");
         }
 
         @Test

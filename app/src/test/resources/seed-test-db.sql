@@ -1,1 +1,1 @@
-insert into url (name) values ("https://www.google.ru/webhp?authuser=1");
+insert into url (name) values ("https://my.englex.ru/");
