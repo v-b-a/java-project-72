@@ -21,7 +21,7 @@
             <td>
                 <a th:href="@{/urls/{id}(id=*{getId()})}" th:text="${#strings.abbreviate(url.getName(), 30)}"></a>
             </td>
-            <td th:text="*{createAt}"></td>
+            <td th:text="*{createdAt}"></td>
         </tr>
         </tbody>
     </table>
