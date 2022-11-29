@@ -1,12 +1,16 @@
 package hexlet.code;
 
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
 import hexlet.code.model.query.QUrl;
+import hexlet.code.model.query.QUrlCheck;
 import io.ebean.DB;
 import io.ebean.Database;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,12 +51,12 @@ public final class AppTest {
 
     @BeforeEach
     void beforeEach() {
-//        database.beginTransaction();
+        database.beginTransaction();
     }
 
     @AfterEach
     void afterEach() {
-//        database.rollbackTransaction();
+        database.rollbackTransaction();
         int url1 = new QUrl()
                 .id.between(1, Integer.MAX_VALUE)
                 .delete();
@@ -169,6 +173,48 @@ public final class AppTest {
         assertThat(response.getStatus()).isEqualTo(responseCode200);
         assertThat(body).contains("Этот сайт уже существует");
     }
+
+//    @Test
+//    public void testCheck() throws Exception {
+//        String titleTest = "<title>some title</title>";
+//        String h1Test = "<h1>some h1</h1>";
+//        // Create a MockWebServer.
+//        MockWebServer server = new MockWebServer();
+//
+//        // Start the server.
+//        server.start();
+//
+//        String testUrl = server.url("/").toString();
+////        server.enqueue(new MockResponse().setBody("hello, world!"));
+//        server.enqueue(new MockResponse().setResponseCode(200));
+//        StringBuilder builder = new StringBuilder();
+//        builder.append(titleTest);
+//        builder.append(h1Test);
+////        builder.append("<meta name=\"description\" content=\"The MDN Web Docs Learning\"/>");
+//
+//        server.enqueue(new MockResponse().setBody(String.valueOf(builder)));
+//
+//        HttpResponse responsePost = Unirest
+//                .post(baseUrl + "/urls")
+//                .field("url", testUrl)
+//                .asEmpty();
+//
+//        assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
+//
+//        Url dbUrl = new QUrl()
+//                .id.equalTo(1)
+//                .findOne();
+//
+//        HttpResponse responsePost2 = Unirest
+//                .post(baseUrl + "/urls/1/checks")
+//                .asString();
+//
+//        UrlCheck dbUrlCheck = new QUrlCheck()
+//                .url.equalTo(dbUrl)
+//                .findOne();
+//        assertThat(dbUrlCheck).isNotNull();
+//        assertThat(dbUrlCheck.getH1()).isEqualTo(h1Test);
+//        assertThat(dbUrlCheck.getTitle()).isEqualTo(titleTest);
 //    }
 
 }

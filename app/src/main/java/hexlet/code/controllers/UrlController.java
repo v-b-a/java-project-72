@@ -5,6 +5,7 @@ import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
 import hexlet.code.model.query.QUrl;
 import hexlet.code.model.query.QUrlCheck;
+import io.ebean.PagedList;
 import io.javalin.http.Handler;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -54,16 +55,18 @@ public final class UrlController {
     }
 
     public static final Handler GET_URLS_LIST = ctx -> {
-        int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1);
-        List<Url> urlList = new QUrl()
+        int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(0);
+        PagedList<Url> urlList = new QUrl()
                 .setFirstRow(page * ROWS_PER_PAGE)
                 .setMaxRows(ROWS_PER_PAGE)
                 .orderBy()
                 .id.asc()
-                .findList();
-        ctx.attribute("urls", urlList);
+                .findPagedList();
+        List<Url> urlList1 = urlList.getList();
+        ctx.attribute("urls", urlList1);
         ctx.render("list.html");
     };
+
     public static final Handler SHOW_URL = ctx -> {
         long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
         Url url = new QUrl()
@@ -91,7 +94,7 @@ public final class UrlController {
         }
 
         HttpResponse<String> response = Unirest
-                .get("https://" + url.getName())
+                .get(url.getName())
                 .asString();
         String body = response.getBody();
         Document html = Jsoup.parse(body);
