@@ -13,9 +13,9 @@ version '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
 }
-compileJava {
-    options.release = 17
-}
+//compileJava {
+//    options = 17
+//}
 
 dependencies {
     implementation 'io.javalin:javalin:4.3.0'

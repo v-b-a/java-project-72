@@ -3,7 +3,6 @@ package hexlet.code;
 import hexlet.code.model.Url;
 import hexlet.code.model.query.QUrl;
 import io.ebean.DB;
-import io.ebean.Database;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -21,9 +20,6 @@ public final class AppTest {
     private final int responseCode302 = 302;
     private static Javalin app;
     private static String baseUrl;
-    private static Url url;
-    private static Database database;
-
 
     @Test
     void testInit() {
@@ -36,7 +32,6 @@ public final class AppTest {
         app.start(0);
         int port = app.port();
         baseUrl = "http://localhost:" + port;
-        database = DB.getDefault();
     }
 
     @AfterAll
@@ -46,12 +41,12 @@ public final class AppTest {
 
     @BeforeEach
     void beforeEach() {
-        database.beginTransaction();
+        DB.beginTransaction();
     }
 
     @AfterEach
     void afterEach() {
-        database.rollbackTransaction();
+        DB.rollbackTransaction();
         int url1 = new QUrl()
                 .id.between(1, Integer.MAX_VALUE)
                 .delete();
@@ -71,7 +66,12 @@ public final class AppTest {
     }
 
     @Test
-    void testUrlsList() {
+    void testShowUrl() {
+        String correctValue = "https://www.google.ru/webhp?authuser=1";
+        HttpResponse responsePost = Unirest
+                .post(baseUrl + "/urls")
+                .field("url", correctValue)
+                .asEmpty();
         HttpResponse<String> response = Unirest
                 .get(baseUrl + "/urls")
                 .asString();
@@ -79,6 +79,8 @@ public final class AppTest {
 
         assertThat(response.getStatus()).isEqualTo(responseCode200);
         assertThat(body).contains("Список проверок");
+        assertThat(body).contains("https://www.google.ru");
+
     }
 
     @Test
@@ -105,6 +107,32 @@ public final class AppTest {
         assertThat(dbUrl).isNotNull();
         assertThat(dbUrl.getName()).isEqualTo(normalizedUrl);
         assertThat(body).containsIgnoringCase("Страница успешно добавлена");
+    }
+
+    @Test
+    void testRepeatCreate() {
+        String inputUrl = "https://www.google.ru/webhp?authuser=1";
+        String normalizedUrl = "https://www.google.ru";
+        HttpResponse responsePost = Unirest
+                .post(baseUrl + "/urls")
+                .field("url", inputUrl)
+                .asEmpty();
+
+        assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
+        assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
+
+        HttpResponse responsePost2 = Unirest
+                .post(baseUrl + "/urls")
+                .field("url", inputUrl)
+                .asEmpty();
+        assertThat(responsePost2.getStatus()).isEqualTo(responseCode302);
+        assertThat(responsePost2.getHeaders().getFirst("Location")).isEqualTo("/");
+
+        HttpResponse<String> response = Unirest
+                .get(baseUrl + "/urls")
+                .asString();
+        String body = response.getBody();
+        assertThat(body).containsIgnoringCase("Этот сайт уже существует");
     }
 
     @Test
@@ -168,6 +196,7 @@ public final class AppTest {
         assertThat(response.getStatus()).isEqualTo(responseCode200);
         assertThat(body).contains("Этот сайт уже существует");
     }
+
 
 //    @Test
 //    public void testCheck() throws Exception {

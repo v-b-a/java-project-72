@@ -105,7 +105,7 @@ public final class UrlController {
         }
         String description = "-";
         if (html.body().getElementsByClass("meta").attr("description") != null) {
-            description = html.body().getElementsByClass("meta").attr("description");
+            description = html.select("meta[name=description]").attr("content");
         }
 
         UrlCheck urlCheck = new UrlCheck(response.getStatus(), title, h1,
