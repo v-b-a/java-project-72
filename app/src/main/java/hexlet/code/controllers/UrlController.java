@@ -21,11 +21,7 @@ public final class UrlController {
         String fullUrl = ctx.formParam("url");
         URL url;
         try {
-            if (fullUrl == null) {
-                throw new NullPointerException();
-            }
             url = new URL(fullUrl);
-
         } catch (Exception e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flash-type", "danger");

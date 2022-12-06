@@ -66,7 +66,7 @@ public final class AppTest {
     }
 
     @Test
-    void testShowUrl() {
+    void testShowUrls() {
         String correctValue = "https://www.google.ru/webhp?authuser=1";
         HttpResponse responsePost = Unirest
                 .post(baseUrl + "/urls")
@@ -80,7 +80,29 @@ public final class AppTest {
         assertThat(response.getStatus()).isEqualTo(responseCode200);
         assertThat(body).contains("Список проверок");
         assertThat(body).contains("https://www.google.ru");
+    }
 
+    @Test
+    void testShowUrl() {
+        String correctValue = "https://www.google.ru/webhp?authuser=1";
+        String normalizedUrl = "https://www.google.ru";
+        HttpResponse responsePost = Unirest
+                .post(baseUrl + "/urls")
+                .field("url", correctValue)
+                .asEmpty();
+
+        Url dbUrl = new QUrl()
+                .name.equalTo(normalizedUrl)
+                .findOne();
+        
+        HttpResponse<String> response = Unirest
+                .get(baseUrl + "/urls/" + dbUrl.getId())
+                .asString();
+        String body = response.getBody();
+
+        assertThat(response.getStatus()).isEqualTo(responseCode200);
+        assertThat(body).contains("Проверка");
+        assertThat(body).contains("https://www.google.ru");
     }
 
     @Test
@@ -155,10 +177,9 @@ public final class AppTest {
 
     @Test
     void testNullUrl() {
-        String incorrectValue1 = null;
         HttpResponse responsePost = Unirest
                 .post(baseUrl + "/urls")
-                .field("url", incorrectValue1)
+                .field("url", (Object) null)
                 .asEmpty();
 
         assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
