@@ -90,11 +90,9 @@ public final class AppTest {
                 .post(baseUrl + "/urls")
                 .field("url", correctValue)
                 .asEmpty();
-
         Url dbUrl = new QUrl()
                 .name.equalTo(normalizedUrl)
                 .findOne();
-        
         HttpResponse<String> response = Unirest
                 .get(baseUrl + "/urls/" + dbUrl.getId())
                 .asString();
