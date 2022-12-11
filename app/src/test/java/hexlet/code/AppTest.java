@@ -253,28 +253,4 @@ public final class AppTest {
         assertThat(dbUrlCheck.getTitle()).isEqualTo("some title");
         assertThat(dbUrlCheck.getDescription()).isEqualTo("some description");
     }
-
-//
-//        HttpResponse<String> responseCheck = Unirest
-//                .post(baseUrl + "/urls/" + actualUrl.getId() + "/checks")
-//                .asEmpty();
-//
-//        HttpResponse<String> response = Unirest
-//                .get(baseUrl + "/urls/" + actualUrl.getId())
-//                .asString();
-//
-//        assertThat(response.getStatus()).isEqualTo(200);
-//
-//        UrlCheck actualCheckUrl = new QUrlCheck()
-//                .url.equalTo(actualUrl)
-//                .orderBy()
-//                .createdAt.desc()
-//                .findOne();
-//
-//        assertThat(actualCheckUrl).isNotNull();
-//        assertThat(actualCheckUrl.getStatusCode()).isEqualTo(200);
-//        assertThat(actualCheckUrl.getTitle()).isEqualTo("Test page");
-//        assertThat(actualCheckUrl.getH1()).isEqualTo("Do not expect a miracle, miracles yourself!");
-//        assertThat(actualCheckUrl.getDescription()).isEqualTo("statements of great people");
-//    }
 }
