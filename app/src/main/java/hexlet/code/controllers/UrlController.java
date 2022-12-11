@@ -14,6 +14,7 @@ import org.jsoup.nodes.Document;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 
 public final class UrlController {
     private static final int ROWS_PER_PAGE = 10;
@@ -28,7 +29,7 @@ public final class UrlController {
             ctx.redirect("/");
             return;
         }
-        String normalizedUrl = url.getProtocol() + "://" + url.getHost();
+        String normalizedUrl = url.getProtocol() + "://" + url.getAuthority();
         Url newUrl = new Url(normalizedUrl);
         if (urlIsAvailable(normalizedUrl)) {
             ctx.sessionAttribute("flash", "Этот сайт уже существует");
@@ -80,10 +81,10 @@ public final class UrlController {
         ctx.render("show.html");
     };
     public static final Handler CHECK_URL = ctx -> {
-        long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
+        long urlId = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
 
         Url url = new QUrl()
-                .id.equalTo(id)
+                .id.equalTo(urlId)
                 .findOne();
         if (url == null) {
             ctx.redirect("/");
@@ -95,14 +96,12 @@ public final class UrlController {
         String body = response.getBody();
         Document html = Jsoup.parse(body);
         String title = html.title();
-        String h1 = "-";
-        if (html.body().getElementsByTag("h1").first() != null) {
-            h1 = html.body().getElementsByTag("h1").first().text();
-        }
-        String description = "-";
-        if (html.body().getElementsByClass("meta").attr("description") != null) {
-            description = html.select("meta[name=description]").attr("content");
-        }
+        String h1 = Objects.requireNonNull(html.body()
+                .getElementsByTag("h1")
+                .first()).text();
+        String description = html.selectFirst("meta[name=description]") != null
+                ? Objects.requireNonNull(html.selectFirst("meta[name=description]")).attr("content")
+                : "-";
 
         UrlCheck urlCheck = new UrlCheck(response.getStatus(), title, h1,
                 description, url);
@@ -115,6 +114,6 @@ public final class UrlController {
 
         ctx.attribute("url", url);
         ctx.attribute("checkList", checkList);
-        ctx.redirect("/urls/" + id);
+        ctx.redirect("/urls/" + urlId);
     };
 }
