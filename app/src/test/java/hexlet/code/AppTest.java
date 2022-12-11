@@ -28,11 +28,11 @@ public final class AppTest {
     private final int responseCode302 = 302;
     private static Javalin app;
     private static String baseUrl;
-    private final String VERIFIED_URL = "https://www.google.ru/webhp?authuser=1";
-    private final String NORMALIZED_URL = "https://www.google.ru";
-    private static final String titleTest = "<title>some title</title>";
-    private static final String h1Test = "<h1>some h1</h1>";
-    private static final String descriptionTest = "<meta name=\"description\" content=\"some description\">";
+    private final String verifiedUrl = "https://www.google.ru/webhp?authuser=1";
+    private final String normalizedUrl = "https://www.google.ru";
+    private static final String TITLE_TEST = "<title>some title</title>";
+    private static final String H1_TEST = "<h1>some h1</h1>";
+    private static final String DESCRIPTION_TEST = "<meta name=\"description\" content=\"some description\">";
     private static String testUrl;
     private static MockWebServer mockServer;
     private Transaction transaction;
@@ -52,7 +52,7 @@ public final class AppTest {
 
 
         MockResponse content = new MockResponse();
-        content.setBody(titleTest + descriptionTest + h1Test);
+        content.setBody(TITLE_TEST + DESCRIPTION_TEST + H1_TEST);
 //        content.setBody(h1Test);
 //        content.setBody(descriptionTest);
 
@@ -100,7 +100,7 @@ public final class AppTest {
     void testShowUrls() {
         HttpResponse responsePost = Unirest
                 .post(baseUrl + "/urls")
-                .field("url", VERIFIED_URL)
+                .field("url", verifiedUrl)
                 .asEmpty();
         HttpResponse<String> response = Unirest
                 .get(baseUrl + "/urls")
@@ -109,17 +109,17 @@ public final class AppTest {
 
         assertThat(response.getStatus()).isEqualTo(responseCode200);
         assertThat(body).contains("Список проверок");
-        assertThat(body).contains(NORMALIZED_URL);
+        assertThat(body).contains(normalizedUrl);
     }
 
     @Test
     void testShowUrl() {
         HttpResponse responsePost = Unirest
                 .post(baseUrl + "/urls")
-                .field("url", VERIFIED_URL)
+                .field("url", verifiedUrl)
                 .asEmpty();
         Url dbUrl = new QUrl()
-                .name.equalTo(NORMALIZED_URL)
+                .name.equalTo(normalizedUrl)
                 .findOne();
         HttpResponse<String> response = Unirest
                 .get(baseUrl + "/urls/" + dbUrl.getId())
@@ -128,14 +128,14 @@ public final class AppTest {
 
         assertThat(response.getStatus()).isEqualTo(responseCode200);
         assertThat(body).contains("Проверка");
-        assertThat(body).contains(NORMALIZED_URL);
+        assertThat(body).contains(normalizedUrl);
     }
 
     @Test
     void testCreate() {
         HttpResponse responsePost = Unirest
                 .post(baseUrl + "/urls")
-                .field("url", VERIFIED_URL)
+                .field("url", verifiedUrl)
                 .asEmpty();
 
         assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
@@ -148,10 +148,10 @@ public final class AppTest {
 
         assertThat(response.getStatus()).isEqualTo(responseCode200);
         Url dbUrl = new QUrl()
-                .name.equalTo(NORMALIZED_URL)
+                .name.equalTo(normalizedUrl)
                 .findOne();
         assertThat(dbUrl).isNotNull();
-        assertThat(dbUrl.getName()).isEqualTo(NORMALIZED_URL);
+        assertThat(dbUrl.getName()).isEqualTo(normalizedUrl);
         assertThat(body).containsIgnoringCase("Страница успешно добавлена");
     }
 
@@ -159,7 +159,7 @@ public final class AppTest {
     void testRepeatCreate() {
         HttpResponse responsePost = Unirest
                 .post(baseUrl + "/urls")
-                .field("url", VERIFIED_URL)
+                .field("url", verifiedUrl)
                 .asEmpty();
 
         assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
@@ -167,7 +167,7 @@ public final class AppTest {
 
         HttpResponse responsePost2 = Unirest
                 .post(baseUrl + "/urls")
-                .field("url", VERIFIED_URL)
+                .field("url", verifiedUrl)
                 .asEmpty();
         assertThat(responsePost2.getStatus()).isEqualTo(responseCode302);
         assertThat(responsePost2.getHeaders().getFirst("Location")).isEqualTo("/");
@@ -273,7 +273,7 @@ public final class AppTest {
                 .get(baseUrl + "/urls/" + actualUrl.getId())
                 .asString();
 
-        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getStatus()).isEqualTo(responseCode200);
 
         UrlCheck actualCheckUrl = new QUrlCheck()
                 .url.equalTo(actualUrl)
@@ -282,7 +282,7 @@ public final class AppTest {
                 .findOne();
 
         assertThat(actualCheckUrl).isNotNull();
-        assertThat(actualCheckUrl.getStatusCode()).isEqualTo(200);
+        assertThat(actualCheckUrl.getStatusCode()).isEqualTo(responseCode200);
         assertThat(actualCheckUrl.getTitle()).isEqualTo("some title");
         assertThat(actualCheckUrl.getH1()).isEqualTo("some h1");
         assertThat(actualCheckUrl.getDescription()).isEqualTo("some description");
