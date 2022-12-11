@@ -114,6 +114,8 @@ public final class UrlController {
 
         ctx.attribute("url", url);
         ctx.attribute("checkList", checkList);
+        ctx.sessionAttribute("flash", "Страница успешно проверена");
+        ctx.sessionAttribute("flash-type", "success");
         ctx.redirect("/urls/" + urlId);
     };
 }
