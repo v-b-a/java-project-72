@@ -53,8 +53,6 @@ public final class AppTest {
 
         MockResponse content = new MockResponse();
         content.setBody(TITLE_TEST + DESCRIPTION_TEST + H1_TEST);
-//        content.setBody(h1Test);
-//        content.setBody(descriptionTest);
 
         mockServer.enqueue(content);
         mockServer.start();
@@ -65,16 +63,20 @@ public final class AppTest {
     public static void afterAll() throws IOException {
         app.stop();
         mockServer.shutdown();
+//        mockServer.stop();
     }
 
     @BeforeEach
     void beforeEach() {
         transaction = DB.beginTransaction();
+
     }
 
     @AfterEach
     void afterEach() {
         transaction.rollback();
+//        DB.truncate(Url.class);
+//        DB.truncate(UrlCheck.class);
         int url1 = new QUrl()
                 .id.between(1, Integer.MAX_VALUE)
                 .delete();
@@ -215,7 +217,6 @@ public final class AppTest {
     }
 
 
-
     @Test
     public void testCheck() throws Exception {
         HttpResponse addCheckListPost = Unirest
@@ -230,62 +231,27 @@ public final class AppTest {
                 .name.equalTo(url.getProtocol() + "://" + url.getAuthority())
                 .findOne();
 
-        HttpResponse checkPost2 = Unirest
+        assertThat(dbUrl).isNotNull();
+        assertThat(dbUrl.getName()).isEqualTo(testUrl.replaceAll("/$", ""));
+
+        HttpResponse checkUrl = Unirest
                 .post(baseUrl + "/urls/" + dbUrl.getId() + "/checks")
                 .body("")
                 .asEmpty();
 
         HttpResponse<String> responseChecks = Unirest
-                .get(baseUrl + "/urls/1")
+                .get(baseUrl + "/urls/" + dbUrl.getId())
                 .asString();
-        String bodyChecks = responseChecks.getBody();
+
+        assertThat(responseChecks.getStatus()).isEqualTo(responseCode200);
 
         UrlCheck dbUrlCheck = new QUrlCheck()
                 .id.equalTo(1)
                 .findOne();
+        assertThat(dbUrlCheck.getStatusCode()).isEqualTo(responseCode200);
         assertThat(dbUrlCheck).isNotNull();
         assertThat(dbUrlCheck.getH1()).isEqualTo("some h1");
         assertThat(dbUrlCheck.getTitle()).isEqualTo("some title");
         assertThat(dbUrlCheck.getDescription()).isEqualTo("some description");
     }
-
-    @Test
-    void testStore() {
-        String url = mockServer.url("/").toString().replaceAll("/$", "");
-
-        HttpResponse<String> responseAddUrl = Unirest
-                .post(baseUrl + "/urls")
-                .field("url", url)
-                .asEmpty();
-
-        Url actualUrl = new QUrl()
-                .name.equalTo(url)
-                .findOne();
-
-        assertThat(actualUrl).isNotNull();
-        assertThat(actualUrl.getName()).isEqualTo(url);
-
-        HttpResponse<String> responseCheck = Unirest
-                .post(baseUrl + "/urls/" + actualUrl.getId() + "/checks")
-                .asEmpty();
-
-        HttpResponse<String> response = Unirest
-                .get(baseUrl + "/urls/" + actualUrl.getId())
-                .asString();
-
-        assertThat(response.getStatus()).isEqualTo(responseCode200);
-
-        UrlCheck actualCheckUrl = new QUrlCheck()
-                .url.equalTo(actualUrl)
-                .orderBy()
-                .createdAt.desc()
-                .findOne();
-
-        assertThat(actualCheckUrl).isNotNull();
-        assertThat(actualCheckUrl.getStatusCode()).isEqualTo(responseCode200);
-        assertThat(actualCheckUrl.getTitle()).isEqualTo("some title");
-        assertThat(actualCheckUrl.getH1()).isEqualTo("some h1");
-        assertThat(actualCheckUrl.getDescription()).isEqualTo("some description");
-    }
-
 }
