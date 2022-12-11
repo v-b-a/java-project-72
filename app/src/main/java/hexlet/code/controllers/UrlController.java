@@ -118,4 +118,5 @@ public final class UrlController {
         ctx.sessionAttribute("flash-type", "success");
         ctx.redirect("/urls/" + urlId);
     };
+
 }

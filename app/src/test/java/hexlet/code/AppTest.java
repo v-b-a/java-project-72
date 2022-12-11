@@ -232,11 +232,10 @@ public final class AppTest {
                 .findOne();
 
         assertThat(dbUrl).isNotNull();
-        assertThat(dbUrl.getName()).isEqualTo(testUrl.replaceAll("/$", ""));
+        assertThat(dbUrl.getName()).isEqualTo(url.getProtocol() + "://" + url.getAuthority());
 
         HttpResponse checkUrl = Unirest
                 .post(baseUrl + "/urls/" + dbUrl.getId() + "/checks")
-                .body("")
                 .asEmpty();
 
         HttpResponse<String> responseChecks = Unirest
@@ -246,7 +245,7 @@ public final class AppTest {
         assertThat(responseChecks.getStatus()).isEqualTo(responseCode200);
 
         UrlCheck dbUrlCheck = new QUrlCheck()
-                .id.equalTo(1)
+                .url.equalTo(dbUrl)
                 .findOne();
         assertThat(dbUrlCheck.getStatusCode()).isEqualTo(responseCode200);
         assertThat(dbUrlCheck).isNotNull();
@@ -254,4 +253,28 @@ public final class AppTest {
         assertThat(dbUrlCheck.getTitle()).isEqualTo("some title");
         assertThat(dbUrlCheck.getDescription()).isEqualTo("some description");
     }
+
+//
+//        HttpResponse<String> responseCheck = Unirest
+//                .post(baseUrl + "/urls/" + actualUrl.getId() + "/checks")
+//                .asEmpty();
+//
+//        HttpResponse<String> response = Unirest
+//                .get(baseUrl + "/urls/" + actualUrl.getId())
+//                .asString();
+//
+//        assertThat(response.getStatus()).isEqualTo(200);
+//
+//        UrlCheck actualCheckUrl = new QUrlCheck()
+//                .url.equalTo(actualUrl)
+//                .orderBy()
+//                .createdAt.desc()
+//                .findOne();
+//
+//        assertThat(actualCheckUrl).isNotNull();
+//        assertThat(actualCheckUrl.getStatusCode()).isEqualTo(200);
+//        assertThat(actualCheckUrl.getTitle()).isEqualTo("Test page");
+//        assertThat(actualCheckUrl.getH1()).isEqualTo("Do not expect a miracle, miracles yourself!");
+//        assertThat(actualCheckUrl.getDescription()).isEqualTo("statements of great people");
+//    }
 }
