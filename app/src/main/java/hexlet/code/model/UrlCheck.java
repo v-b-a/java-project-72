@@ -3,6 +3,7 @@ package hexlet.code.model;
 import io.ebean.Model;
 import io.ebean.annotation.WhenCreated;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.CascadeType;
@@ -14,6 +15,7 @@ import java.time.Instant;
 @Entity
 @Setter
 @Getter
+@NoArgsConstructor
 public final class UrlCheck extends Model {
     @Id
     private long id;
@@ -33,12 +35,5 @@ public final class UrlCheck extends Model {
         this.h1 = h1N;
         this.description = descriptionN;
         this.url = urlN;
-    }
-
-    public UrlCheck(int statusCode, String title, String h1, String description) {
-        this.statusCode = statusCode;
-        this.title = title;
-        this.h1 = h1;
-        this.description = description;
     }
 }
