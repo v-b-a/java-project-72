@@ -70,14 +70,9 @@ public final class AppTest {
     @AfterEach
     void afterEach() {
         transaction.rollback();
-        int url1 = new QUrl()
-                .id.between(1, Integer.MAX_VALUE)
-                .delete();
-        int urlCheck = new QUrlCheck()
-                .id.between(1, Integer.MAX_VALUE)
-                .delete();
+        int url1 = new QUrl().id.between(1, Integer.MAX_VALUE).delete();
+        int urlCheck = new QUrlCheck().id.between(1, Integer.MAX_VALUE).delete();
     }
-
 
 
     @Test
@@ -95,13 +90,8 @@ public final class AppTest {
 
     @Test
     void testShowUrls() {
-        HttpResponse responsePost = Unirest
-                .post(baseUrl + "/urls")
-                .field("url", verifiedUrl)
-                .asEmpty();
-        HttpResponse<String> response = Unirest
-                .get(baseUrl + "/urls")
-                .asString();
+        HttpResponse responsePost = Unirest.post(baseUrl + "/urls").field("url", verifiedUrl).asEmpty();
+        HttpResponse<String> response = Unirest.get(baseUrl + "/urls").asString();
         String body = response.getBody();
 
         assertThat(response.getStatus()).isEqualTo(responseCode200);
@@ -111,16 +101,9 @@ public final class AppTest {
 
     @Test
     void testShowUrl() {
-        HttpResponse responsePost = Unirest
-                .post(baseUrl + "/urls")
-                .field("url", verifiedUrl)
-                .asEmpty();
-        Url dbUrl = new QUrl()
-                .name.equalTo(normalizedUrl)
-                .findOne();
-        HttpResponse<String> response = Unirest
-                .get(baseUrl + "/urls/" + dbUrl.getId())
-                .asString();
+        HttpResponse responsePost = Unirest.post(baseUrl + "/urls").field("url", verifiedUrl).asEmpty();
+        Url dbUrl = new QUrl().name.equalTo(normalizedUrl).findOne();
+        HttpResponse<String> response = Unirest.get(baseUrl + "/urls/" + dbUrl.getId()).asString();
         String body = response.getBody();
 
         assertThat(response.getStatus()).isEqualTo(responseCode200);
@@ -130,23 +113,16 @@ public final class AppTest {
 
     @Test
     void testCreate() {
-        HttpResponse responsePost = Unirest
-                .post(baseUrl + "/urls")
-                .field("url", verifiedUrl)
-                .asEmpty();
+        HttpResponse responsePost = Unirest.post(baseUrl + "/urls").field("url", verifiedUrl).asEmpty();
 
         assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
         assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
 
-        HttpResponse<String> response = Unirest
-                .get(baseUrl + "/urls")
-                .asString();
+        HttpResponse<String> response = Unirest.get(baseUrl + "/urls").asString();
         String body = response.getBody();
 
         assertThat(response.getStatus()).isEqualTo(responseCode200);
-        Url dbUrl = new QUrl()
-                .name.equalTo(normalizedUrl)
-                .findOne();
+        Url dbUrl = new QUrl().name.equalTo(normalizedUrl).findOne();
         assertThat(dbUrl).isNotNull();
         assertThat(dbUrl.getName()).isEqualTo(normalizedUrl);
         assertThat(body).containsIgnoringCase("Страница успешно добавлена");
@@ -154,24 +130,16 @@ public final class AppTest {
 
     @Test
     void testRepeatCreate() {
-        HttpResponse responsePost = Unirest
-                .post(baseUrl + "/urls")
-                .field("url", verifiedUrl)
-                .asEmpty();
+        HttpResponse responsePost = Unirest.post(baseUrl + "/urls").field("url", verifiedUrl).asEmpty();
 
         assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
         assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
 
-        HttpResponse responsePost2 = Unirest
-                .post(baseUrl + "/urls")
-                .field("url", verifiedUrl)
-                .asEmpty();
+        HttpResponse responsePost2 = Unirest.post(baseUrl + "/urls").field("url", verifiedUrl).asEmpty();
         assertThat(responsePost2.getStatus()).isEqualTo(responseCode302);
         assertThat(responsePost2.getHeaders().getFirst("Location")).isEqualTo("/");
 
-        HttpResponse<String> response = Unirest
-                .get(baseUrl + "/urls")
-                .asString();
+        HttpResponse<String> response = Unirest.get(baseUrl + "/urls").asString();
         String body = response.getBody();
         assertThat(body).containsIgnoringCase("Этот сайт уже существует");
     }
@@ -179,15 +147,10 @@ public final class AppTest {
     @Test
     void testIncorrectUrl() {
         String incorrectValue1 = "tree";
-        HttpResponse responsePost = Unirest
-                .post(baseUrl + "/urls")
-                .field("url", incorrectValue1)
-                .asEmpty();
+        HttpResponse responsePost = Unirest.post(baseUrl + "/urls").field("url", incorrectValue1).asEmpty();
 
         assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
-        HttpResponse<String> response = Unirest
-                .get(baseUrl)
-                .asString();
+        HttpResponse<String> response = Unirest.get(baseUrl).asString();
         String body = response.getBody();
 
         assertThat(response.getStatus()).isEqualTo(responseCode200);
@@ -196,15 +159,10 @@ public final class AppTest {
 
     @Test
     void testNullUrl() {
-        HttpResponse responsePost = Unirest
-                .post(baseUrl + "/urls")
-                .field("url", (Object) null)
-                .asEmpty();
+        HttpResponse responsePost = Unirest.post(baseUrl + "/urls").field("url", (Object) null).asEmpty();
 
         assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
-        HttpResponse<String> response = Unirest
-                .get(baseUrl)
-                .asString();
+        HttpResponse<String> response = Unirest.get(baseUrl).asString();
         String body = response.getBody();
 
         assertThat(response.getStatus()).isEqualTo(responseCode200);
@@ -214,32 +172,21 @@ public final class AppTest {
 
     @Test
     public void testCheck() throws Exception {
-        HttpResponse addCheckListPost = Unirest
-                .post(baseUrl + "/urls")
-                .field("url", testUrl)
-                .asEmpty();
+        HttpResponse addCheckListPost = Unirest.post(baseUrl + "/urls").field("url", testUrl).asEmpty();
 
         URL url = new URL(testUrl);
-                Url dbUrl = new QUrl()
-                .name.equalTo(url.getProtocol() + "://" + url.getAuthority())
-                .findOne();
+        Url dbUrl = new QUrl().name.equalTo(url.getProtocol() + "://" + url.getAuthority()).findOne();
         assertThat(dbUrl).isNotNull();
         assertThat(dbUrl.getName()).isEqualTo(url.getProtocol() + "://" + url.getAuthority());
-        HttpResponse checkUrl = Unirest
-                .post(baseUrl + "/urls/" + dbUrl.getId() + "/checks")
-                .asEmpty();
+        HttpResponse checkUrl = Unirest.post(baseUrl + "/urls/" + dbUrl.getId() + "/checks").asEmpty();
 
-        HttpResponse<String> responseChecks = Unirest
-                .get(baseUrl + "/urls/" + dbUrl.getId())
-                .asString();
+        HttpResponse<String> responseChecks = Unirest.get(baseUrl + "/urls/" + dbUrl.getId()).asString();
 
         assertThat(responseChecks.getStatus()).isEqualTo(responseCode200);
         assertThat(responseChecks.getBody()).contains("Страница успешно проверена");
 
 
-        UrlCheck dbUrlCheck = new QUrlCheck()
-                .url.equalTo(dbUrl)
-                .findOne();
+        UrlCheck dbUrlCheck = new QUrlCheck().url.equalTo(dbUrl).findOne();
         assertThat(dbUrlCheck.getStatusCode()).isEqualTo(responseCode200);
         assertThat(dbUrlCheck).isNotNull();
         assertThat(dbUrlCheck.getH1()).isEqualTo("some h1");
