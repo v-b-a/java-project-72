@@ -1,16 +1,18 @@
 package hexlet.code.controllers;
 
-
 import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
 import hexlet.code.model.query.QUrl;
 import hexlet.code.model.query.QUrlCheck;
 import io.ebean.PagedList;
 import io.javalin.http.Handler;
+import io.javalin.http.NotFoundResponse;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import kong.unirest.UnirestException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import java.net.URL;
 import java.util.List;
@@ -87,36 +89,44 @@ public final class UrlController {
                 .id.equalTo(urlId)
                 .findOne();
         if (url == null) {
-            ctx.redirect("/");
+            throw new NotFoundResponse();
         }
+        try {
+            HttpResponse<String> response = Unirest
+                    .get(url.getName())
+                    .asString();
+            String body = response.getBody();
+            Document html = Jsoup.parse(body);
+            String title = html.title();
+            String h1 = Objects.requireNonNull(html.body()
+                    .getElementsByTag("h1")
+                    .first()).text();
+            Element descriptionElement = html.selectFirst("meta[name=description]");
+            String description = descriptionElement == null ? "" : descriptionElement.attr("content");
 
-        HttpResponse<String> response = Unirest
-                .get(url.getName())
-                .asString();
-        String body = response.getBody();
-        Document html = Jsoup.parse(body);
-        String title = html.title();
-        String h1 = Objects.requireNonNull(html.body()
-                .getElementsByTag("h1")
-                .first()).text();
-        String description = html.selectFirst("meta[name=description]") != null
-                ? Objects.requireNonNull(html.selectFirst("meta[name=description]")).attr("content")
-                : "-";
+            UrlCheck urlCheck = new UrlCheck(response.getStatus(), title, h1,
+                    description, url);
+            urlCheck.save();
+            url.getUrlCheckList().add(urlCheck);
+            url.save();
+            List<UrlCheck> checkList = new QUrlCheck()
+                    .url.equalTo(url)
+                    .orderBy()
+                    .findList();
 
-        UrlCheck urlCheck = new UrlCheck(response.getStatus(), title, h1,
-                description, url);
-
-        urlCheck.save();
-        List<UrlCheck> checkList = new QUrlCheck()
-                .url.equalTo(url)
-                .orderBy()
-                .findList();
-
-        ctx.attribute("url", url);
-        ctx.attribute("checkList", checkList);
-        ctx.sessionAttribute("flash", "Страница успешно проверена");
-        ctx.sessionAttribute("flash-type", "success");
-        ctx.redirect("/urls/" + urlId);
+            ctx.attribute("url", url);
+            ctx.attribute("checkList", checkList);
+            ctx.sessionAttribute("flash", "Страница успешно проверена");
+            ctx.sessionAttribute("flash-type", "success");
+            ctx.redirect("/urls/" + url.getId());
+        } catch (UnirestException e) {
+            ctx.sessionAttribute("flash", "Некорректный адрес");
+            ctx.sessionAttribute("flash-type", "danger");
+        }
+        catch (Exception e) {
+            ctx.sessionAttribute("flash", e.getMessage());
+            ctx.sessionAttribute("flash-type", "danger");
+        }
     };
 
 }

@@ -11,12 +11,7 @@ import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.net.URL;
@@ -49,8 +44,6 @@ public final class AppTest {
         int port = app.port();
         baseUrl = "http://localhost:" + port;
         mockServer = new MockWebServer();
-
-
         MockResponse content = new MockResponse();
         content.setBody(TITLE_TEST + DESCRIPTION_TEST + H1_TEST);
 
@@ -63,20 +56,16 @@ public final class AppTest {
     public static void afterAll() throws IOException {
         app.stop();
         mockServer.shutdown();
-//        mockServer.stop();
     }
 
     @BeforeEach
     void beforeEach() {
         transaction = DB.beginTransaction();
-
     }
 
     @AfterEach
     void afterEach() {
         transaction.rollback();
-//        DB.truncate(Url.class);
-//        DB.truncate(UrlCheck.class);
         int url1 = new QUrl()
                 .id.between(1, Integer.MAX_VALUE)
                 .delete();
@@ -84,6 +73,8 @@ public final class AppTest {
                 .id.between(1, Integer.MAX_VALUE)
                 .delete();
     }
+
+
 
     @Test
     void testApp() {
@@ -225,15 +216,11 @@ public final class AppTest {
                 .asEmpty();
 
         URL url = new URL(testUrl);
-
-
-        Url dbUrl = new QUrl()
+                Url dbUrl = new QUrl()
                 .name.equalTo(url.getProtocol() + "://" + url.getAuthority())
                 .findOne();
-
         assertThat(dbUrl).isNotNull();
         assertThat(dbUrl.getName()).isEqualTo(url.getProtocol() + "://" + url.getAuthority());
-
         HttpResponse checkUrl = Unirest
                 .post(baseUrl + "/urls/" + dbUrl.getId() + "/checks")
                 .asEmpty();
@@ -243,6 +230,8 @@ public final class AppTest {
                 .asString();
 
         assertThat(responseChecks.getStatus()).isEqualTo(responseCode200);
+        assertThat(responseChecks.getBody()).contains("Страница успешно проверена");
+
 
         UrlCheck dbUrlCheck = new QUrlCheck()
                 .url.equalTo(dbUrl)
@@ -253,4 +242,8 @@ public final class AppTest {
         assertThat(dbUrlCheck.getTitle()).isEqualTo("some title");
         assertThat(dbUrlCheck.getDescription()).isEqualTo("some description");
     }
+
 }
+
+
+
