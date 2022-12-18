@@ -59,7 +59,7 @@ public final class AppTest {
 
     @AfterAll
     public static void afterAll() throws IOException {
-        app.stop();
+//        app.stop();
         mockServer.shutdown();
     }
 
@@ -71,8 +71,8 @@ public final class AppTest {
     @AfterEach
     void afterEach() {
         transaction.rollback();
-//        int url1 = new QUrl().id.between(1, Integer.MAX_VALUE).delete();
-//        int urlCheck = new QUrlCheck().id.between(1, Integer.MAX_VALUE).delete();
+        int url1 = new QUrl().id.between(1, Integer.MAX_VALUE).delete();
+        int urlCheck = new QUrlCheck().id.between(1, Integer.MAX_VALUE).delete();
     }
 
 
@@ -127,6 +127,9 @@ public final class AppTest {
         assertThat(dbUrl).isNotNull();
         assertThat(dbUrl.getName()).isEqualTo(normalizedUrl);
         assertThat(body).containsIgnoringCase("Страница успешно добавлена");
+
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(body).contains(normalizedUrl);
     }
 
     @Test
@@ -187,7 +190,9 @@ public final class AppTest {
         assertThat(responseChecks.getBody()).contains("Страница успешно проверена");
 
 
-        UrlCheck dbUrlCheck = new QUrlCheck().url.equalTo(dbUrl).findOne();
+        UrlCheck dbUrlCheck = new QUrlCheck()
+                .id.equalTo(dbUrl.getId())
+                .findOne();
         assertThat(dbUrlCheck.getStatusCode()).isEqualTo(responseCode200);
         assertThat(dbUrlCheck).isNotNull();
         assertThat(dbUrlCheck.getH1()).isEqualTo("some h1");
@@ -224,7 +229,7 @@ public final class AppTest {
                 .asString();
         String body = response.getBody();
         assertThat(response.getStatus()).isEqualTo(200);
-//        assertThat(body).contains(existingUrl.getString("name"));
+        assertThat(body).contains(existingUrl.getString("name"));
         assertThat(body).contains(existingUrlCheck.getString("status_code"));
     }
 

@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.time.Instant;
 
 @Entity
@@ -29,11 +26,11 @@ public final class UrlCheck extends Model {
     @WhenCreated
     private Instant createdAt;
 
-    public UrlCheck(int status, String titleT, String h1N, String descriptionN, Url urlN) {
-        this.statusCode = status;
-        this.title = titleT;
-        this.h1 = h1N;
-        this.description = descriptionN;
-        this.url = urlN;
+    public UrlCheck(long id, int statusCode, String title, String h1, String description) {
+        this.id = id;
+        this.statusCode = statusCode;
+        this.title = title;
+        this.h1 = h1;
+        this.description = description;
     }
 }

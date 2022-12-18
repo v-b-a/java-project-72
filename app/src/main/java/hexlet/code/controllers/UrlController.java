@@ -55,12 +55,13 @@ public final class UrlController {
 
     public static final Handler GET_URLS_LIST = ctx -> {
         int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(0);
-        PagedList<Url> pagedList = new QUrl()
-//                .orderBy().id.asc()
+        List<Url> urlList = new QUrl()
                 .setFirstRow(page * ROWS_PER_PAGE)
                 .setMaxRows(ROWS_PER_PAGE)
-                .findPagedList();
-        List<Url> urlList = pagedList.getList();
+                .orderBy("id")
+                .findPagedList()
+                .getList();
+//        List<Url> urlList = pagedList.getList();
         ctx.attribute("urls", urlList);
         ctx.render("list.html");
     };
@@ -72,7 +73,8 @@ public final class UrlController {
                 .findOne();
 
         List<UrlCheck> checkList = new QUrlCheck()
-                .url.equalTo(url)
+                .id.equalTo(url.getId())
+//                .url.equalTo(url)
                 .orderBy()
                 .findList();
 
@@ -97,19 +99,21 @@ public final class UrlController {
             String body = response.getBody();
             Document html = Jsoup.parse(body);
             String title = html.title();
-            String h1 = Objects.requireNonNull(html.body()
-                    .getElementsByTag("h1")
-                    .first()).text();
+
+            Element h1Element = html.selectFirst("h1");
+            String h1 = h1Element == null ? "" : h1Element.text();
+
             Element descriptionElement = html.selectFirst("meta[name=description]");
             String description = descriptionElement == null ? "" : descriptionElement.attr("content");
 
-            UrlCheck urlCheck = new UrlCheck(response.getStatus(), title, h1,
-                    description, url);
+            UrlCheck urlCheck = new UrlCheck(url.getId(), response.getStatus(), title, h1,
+                    description);
             urlCheck.save();
             url.getUrlCheckList().add(urlCheck);
             url.save();
             List<UrlCheck> checkList = new QUrlCheck()
-                    .url.equalTo(url)
+                    .id.equalTo(url.getId())
+//                    .url.equalTo(url)
                     .orderBy()
                     .findList();
 
