@@ -55,14 +55,13 @@ public final class UrlController {
 
     public static final Handler GET_URLS_LIST = ctx -> {
         int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(0);
-        PagedList<Url> urlList = new QUrl()
+        PagedList<Url> pagedList = new QUrl()
+//                .orderBy().id.asc()
                 .setFirstRow(page * ROWS_PER_PAGE)
                 .setMaxRows(ROWS_PER_PAGE)
-                .orderBy()
-                .id.asc()
                 .findPagedList();
-        List<Url> urlList1 = urlList.getList();
-        ctx.attribute("urls", urlList1);
+        List<Url> urlList = pagedList.getList();
+        ctx.attribute("urls", urlList);
         ctx.render("list.html");
     };
 

@@ -5,13 +5,14 @@ import hexlet.code.model.UrlCheck;
 import hexlet.code.model.query.QUrl;
 import hexlet.code.model.query.QUrlCheck;
 import io.ebean.DB;
+import io.ebean.SqlRow;
 import io.ebean.Transaction;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -70,8 +71,8 @@ public final class AppTest {
     @AfterEach
     void afterEach() {
         transaction.rollback();
-        int url1 = new QUrl().id.between(1, Integer.MAX_VALUE).delete();
-        int urlCheck = new QUrlCheck().id.between(1, Integer.MAX_VALUE).delete();
+//        int url1 = new QUrl().id.between(1, Integer.MAX_VALUE).delete();
+//        int urlCheck = new QUrlCheck().id.between(1, Integer.MAX_VALUE).delete();
     }
 
 
@@ -81,12 +82,12 @@ public final class AppTest {
         assertThat(port).isNotNull();
     }
 
-    @Test
-    void testIndex() {
-        HttpResponse<String> response = Unirest.get(baseUrl).asString();
-        assertThat(response.getStatus()).isEqualTo(responseCode200);
-        assertThat(response.getBody()).contains("Анализатор web-сайтов");
-    }
+//    @Test
+//    void testIndex() {
+//        HttpResponse<String> response = Unirest.get(baseUrl).asString();
+//        assertThat(response.getStatus()).isEqualTo(responseCode200);
+//        assertThat(response.getBody()).contains("Анализатор web-сайтов");
+//    }
 
     @Test
     void testShowUrls() {
@@ -194,6 +195,45 @@ public final class AppTest {
         assertThat(dbUrlCheck.getDescription()).isEqualTo("some description");
     }
 
+    @Test
+    void testIndex() {
+        SqlRow existingUrl;
+        SqlRow existingUrlCheck;
+
+        String url = "https://en.hexlet.io";
+        String createUrl = String.format(
+                "INSERT INTO url (name, created_at) VALUES ('%s', '2021-09-27 14:20:19.13');",
+                url
+        );
+        DB.sqlUpdate(createUrl).execute();
+        String selectUrl = String.format("SELECT * FROM url WHERE name = '%s';", url);
+        existingUrl = DB.sqlQuery(selectUrl).findOne();
+        String createUrlCheck = String.format(
+                "INSERT INTO url_check (url_id, status_code, title, description, h1, created_at)"
+                        + "VALUES (%s, 200, 'en title', 'en description', 'en h1', '2021-09-27 14:20:19.13');",
+                existingUrl.getString("id")
+        );
+        DB.sqlUpdate(createUrlCheck).execute();
+        String selectUrlCheck = String.format(
+                "SELECT * FROM url_check WHERE url_id = '%s';",
+                existingUrl.getString("id")
+        );
+        existingUrlCheck = DB.sqlQuery(selectUrlCheck).findOne();
+        HttpResponse<String> response = Unirest
+                .get(baseUrl + "/urls")
+                .asString();
+        String body = response.getBody();
+        assertThat(response.getStatus()).isEqualTo(200);
+//        assertThat(body).contains(existingUrl.getString("name"));
+        assertThat(body).contains(existingUrlCheck.getString("status_code"));
+    }
+
+    @Test
+    void testIndex2() {
+        HttpResponse<String> response = Unirest.get(baseUrl).asString();
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getBody()).contains("Анализатор страниц");
+    }
 }
 
 
