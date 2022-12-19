@@ -30,11 +30,11 @@ public final class UrlCheck extends Model {
     @WhenCreated
     private Instant createdAt;
 
-    public UrlCheck(int statusCode, String title1, String h11, String description1, Url url1) {
-        this.statusCode = statusCode;
-        this.title = title1;
-        this.h1 = h11;
-        this.description = description1;
-        this.url = url1;
+    public UrlCheck(int newStatusCode, String newTitle, String newH1, String newDescription, Url newUrl) {
+        this.statusCode = newStatusCode;
+        this.title = newTitle;
+        this.h1 = newH1;
+        this.description = newDescription;
+        this.url = newUrl;
     }
 }
