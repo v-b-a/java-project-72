@@ -128,7 +128,7 @@ public final class AppTest {
         assertThat(dbUrl.getName()).isEqualTo(normalizedUrl);
         assertThat(body).containsIgnoringCase("Страница успешно добавлена");
 
-        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getStatus()).isEqualTo(responseCode200);
         assertThat(body).contains(normalizedUrl);
     }
 
@@ -236,7 +236,7 @@ public final class AppTest {
     @Test
     void testIndex2() {
         HttpResponse<String> response = Unirest.get(baseUrl).asString();
-        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getStatus()).isEqualTo(responseCode200);
         assertThat(response.getBody()).contains("Анализатор страниц");
     }
 }
