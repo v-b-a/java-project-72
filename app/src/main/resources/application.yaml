@@ -12,6 +12,10 @@ datasource:
     url: ${DATABASE_URL}
 # Заполняем базу данных первоначальными данными
 ebean:
-  migration:
-    run: true
+  development:
+    migration:
+      run: true
+  production:
+    migration:
+      run: true
 

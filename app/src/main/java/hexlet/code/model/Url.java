@@ -33,6 +33,18 @@ public final class Url extends Model {
     public Url(String url) {
         this.name = url;
     }
+    public Instant getLastCheckDate() {
+        if (!urlCheckList.isEmpty()) {
+            return urlCheckList.get(urlCheckList.size() - 1).getCreatedAt();
+        }
+        return null;
+    }
+    public Integer getLastCheckStatus() {
+        if (!urlCheckList.isEmpty()) {
+            return urlCheckList.get(urlCheckList.size() - 1).getStatusCode();
+        }
+        return null;
+    }
 
 
 }

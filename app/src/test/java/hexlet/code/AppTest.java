@@ -5,6 +5,7 @@ import hexlet.code.model.UrlCheck;
 import hexlet.code.model.query.QUrl;
 import hexlet.code.model.query.QUrlCheck;
 import io.ebean.DB;
+import io.ebean.Database;
 import io.ebean.SqlRow;
 import io.ebean.Transaction;
 import io.javalin.Javalin;
@@ -37,6 +38,9 @@ public final class AppTest {
     private static MockWebServer mockServer;
     private Transaction transaction;
 
+    private static Database database;
+
+
     @Test
     void testInit() {
         assertThat(true).isEqualTo(true);
@@ -55,22 +59,24 @@ public final class AppTest {
         mockServer.enqueue(content);
         mockServer.start();
         testUrl = mockServer.url("/").toString();
+
+        database = DB.getDefault();
     }
 
     @AfterAll
     public static void afterAll() throws IOException {
-//        app.stop();
+        app.stop();
         mockServer.shutdown();
     }
 
     @BeforeEach
     void beforeEach() {
-        transaction = DB.beginTransaction();
+//        transaction = DB.beginTransaction();
     }
 
     @AfterEach
     void afterEach() {
-        transaction.rollback();
+//        transaction.rollback();
         int url1 = new QUrl().id.between(1, Integer.MAX_VALUE).delete();
         int urlCheck = new QUrlCheck().id.between(1, Integer.MAX_VALUE).delete();
     }
@@ -82,12 +88,6 @@ public final class AppTest {
         assertThat(port).isNotNull();
     }
 
-//    @Test
-//    void testIndex() {
-//        HttpResponse<String> response = Unirest.get(baseUrl).asString();
-//        assertThat(response.getStatus()).isEqualTo(responseCode200);
-//        assertThat(response.getBody()).contains("Анализатор web-сайтов");
-//    }
 
     @Test
     void testShowUrls() {
@@ -228,7 +228,7 @@ public final class AppTest {
                 .get(baseUrl + "/urls")
                 .asString();
         String body = response.getBody();
-        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getStatus()).isEqualTo(responseCode200);
         assertThat(body).contains(existingUrl.getString("name"));
         assertThat(body).contains(existingUrlCheck.getString("status_code"));
     }
