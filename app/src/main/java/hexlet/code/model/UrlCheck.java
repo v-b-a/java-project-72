@@ -16,6 +16,8 @@ import java.time.Instant;
 @Entity
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public final class UrlCheck extends Model {
     @Id
     private long id;
