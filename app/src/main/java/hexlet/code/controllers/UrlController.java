@@ -103,8 +103,8 @@ public final class UrlController {
             Element descriptionElement = html.selectFirst("meta[name=description]");
             String description = descriptionElement == null ? "" : descriptionElement.attr("content");
 
-            UrlCheck urlCheck = new UrlCheck(url.getId(), response.getStatus(), title, h1,
-                    description);
+            UrlCheck urlCheck = new UrlCheck(response.getStatus(), title, h1,
+                    description, url);
             urlCheck.save();
             url.getUrlCheckList().add(urlCheck);
             url.save();

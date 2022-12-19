@@ -191,7 +191,7 @@ public final class AppTest {
 
 
         UrlCheck dbUrlCheck = new QUrlCheck()
-                .id.equalTo(dbUrl.getId())
+                .url.equalTo(dbUrl)
                 .findOne();
         assertThat(dbUrlCheck.getStatusCode()).isEqualTo(responseCode200);
         assertThat(dbUrlCheck).isNotNull();
