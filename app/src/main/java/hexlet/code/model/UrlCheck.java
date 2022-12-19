@@ -2,17 +2,20 @@ package hexlet.code.model;
 
 import io.ebean.Model;
 import io.ebean.annotation.WhenCreated;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.time.Instant;
 
 @Entity
 @Setter
 @Getter
-@NoArgsConstructor
 public final class UrlCheck extends Model {
     @Id
     private long id;

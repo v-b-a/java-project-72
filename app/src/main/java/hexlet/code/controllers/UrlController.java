@@ -54,8 +54,8 @@ public final class UrlController {
     public static final Handler GET_URLS_LIST = ctx -> {
         int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(0);
         List<Url> urlList = new QUrl()
-                .setFirstRow(page * 10)
-                .setMaxRows(10)
+                .setFirstRow(page * ROWS_PER_PAGE)
+                .setMaxRows(ROWS_PER_PAGE)
                 .orderBy("id")
                 .findPagedList()
                 .getList();
