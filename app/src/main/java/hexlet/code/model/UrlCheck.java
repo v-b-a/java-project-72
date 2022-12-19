@@ -2,9 +2,7 @@ package hexlet.code.model;
 
 import io.ebean.Model;
 import io.ebean.annotation.WhenCreated;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
@@ -18,8 +16,6 @@ import java.time.Instant;
 @Entity
 @Setter
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 public final class UrlCheck extends Model {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,11 +30,11 @@ public final class UrlCheck extends Model {
     @WhenCreated
     private Instant createdAt;
 
-    public UrlCheck(int statusCode, String title, String h1, String description, Url url) {
+    public UrlCheck(int statusCode, String title1, String h11, String description1, Url url1) {
         this.statusCode = statusCode;
-        this.title = title;
-        this.h1 = h1;
-        this.description = description;
-        this.url = url;
+        this.title = title1;
+        this.h1 = h11;
+        this.description = description1;
+        this.url = url1;
     }
 }
