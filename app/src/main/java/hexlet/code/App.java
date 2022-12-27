@@ -67,29 +67,12 @@ public class App {
                 get(UrlController.GET_URLS_LIST);
                 post(UrlController.ADD_URL);
                 path("{id}", () -> {
-                    get(UrlController.SHOW_URL);                    path("checks", () -> {
-                        post(UrlController.CHECK_URL);
-                    });
+                    get(UrlController.SHOW_URL);
+                    path("checks", () -> post(UrlController.CHECK_URL));
                 });
             });
         });
     }
-
-
-//    private static void addRoutes(Javalin app) {
-//        app.get("/", RootController.MAIN_PAGE);
-//        app.routes(() -> {
-//            app.routes(() -> path("urls", () -> {
-//                get(UrlController.GET_URLS_LIST);
-//                post(UrlController.ADD_URL);
-
-////                path("/{id}", () -> {
-////                    get(UrlController.SHOW_URL);
-////                    post("/checks", UrlController.CHECK_URL);
-////                });
-//            }));
-//        });
-//    }
 }
 
 

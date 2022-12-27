@@ -17,10 +17,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,20 +33,12 @@ public final class AppTest {
     private static String baseUrl;
     private final String verifiedUrl = "https://www.google.ru/webhp?authuser=1";
     private final String normalizedUrl = "https://www.google.ru";
-    private static final String TITLE_TEST = "<title>some title</title>";
-    private static final String H1_TEST = "<h1>some h1</h1>";
-    private static final String DESCRIPTION_TEST = "<meta name=\"description\" content=\"some description\">";
+    static File file = new File("app/src/test/resources/fixtures.html");
+    private static String HTML_CONTENT;
     private static String testUrl;
     private static MockWebServer mockServer;
     private Transaction transaction;
-
     private static Database database;
-
-
-    @Test
-    void testInit() {
-        assertThat(true).isEqualTo(true);
-    }
 
     @BeforeAll
     public static void beforeAll() throws IOException {
@@ -54,12 +48,13 @@ public final class AppTest {
         baseUrl = "http://localhost:" + port;
         mockServer = new MockWebServer();
         MockResponse content = new MockResponse();
-        content.setBody(TITLE_TEST + DESCRIPTION_TEST + H1_TEST);
+        HTML_CONTENT =
+                Files.readString(Paths.get("src/test/resources/fixtures.html"));
 
+        content.setBody(HTML_CONTENT);
         mockServer.enqueue(content);
         mockServer.start();
         testUrl = mockServer.url("/").toString();
-
         database = DB.getDefault();
     }
 
@@ -69,16 +64,9 @@ public final class AppTest {
         mockServer.shutdown();
     }
 
-    @BeforeEach
-    void beforeEach() {
-//        transaction = DB.beginTransaction();
-    }
-
     @AfterEach
     void afterEach() {
-//        transaction.rollback();
-        int url1 = new QUrl().id.between(1, Integer.MAX_VALUE).delete();
-        int urlCheck = new QUrlCheck().id.between(1, Integer.MAX_VALUE).delete();
+        database.script().run("/truncate.sql");
     }
 
 
@@ -119,7 +107,9 @@ public final class AppTest {
         assertThat(responsePost.getStatus()).isEqualTo(responseCode302);
         assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/urls");
 
-        HttpResponse<String> response = Unirest.get(baseUrl + "/urls").asString();
+        HttpResponse<String> response = Unirest
+                .get(baseUrl + "/urls")
+                .asString();
         String body = response.getBody();
 
         assertThat(response.getStatus()).isEqualTo(responseCode200);
@@ -182,7 +172,9 @@ public final class AppTest {
         Url dbUrl = new QUrl().name.equalTo(url.getProtocol() + "://" + url.getAuthority()).findOne();
         assertThat(dbUrl).isNotNull();
         assertThat(dbUrl.getName()).isEqualTo(url.getProtocol() + "://" + url.getAuthority());
-        HttpResponse checkUrl = Unirest.post(baseUrl + "/urls/" + dbUrl.getId() + "/checks").asEmpty();
+        HttpResponse checkUrl = Unirest
+                .post(baseUrl + "/urls/" + dbUrl.getId() + "/checks")
+                .asEmpty();
 
         HttpResponse<String> responseChecks = Unirest.get(baseUrl + "/urls/" + dbUrl.getId()).asString();
 
