@@ -31,7 +31,7 @@ public final class AppTest {
     private static String baseUrl;
     private final String verifiedUrl = "https://www.google.ru/webhp?authuser=1";
     private final String normalizedUrl = "https://www.google.ru";
-    private static String HTML_CONTENT;
+    private static String htmlContent;
     private static String testUrl;
     private static MockWebServer mockServer;
     private Transaction transaction;
@@ -45,10 +45,9 @@ public final class AppTest {
         baseUrl = "http://localhost:" + port;
         mockServer = new MockWebServer();
         MockResponse content = new MockResponse();
-        HTML_CONTENT =
-                Files.readString(Paths.get("src/test/resources/fixtures.html"));
+        htmlContent = Files.readString(Paths.get("src/test/resources/fixtures.html"));
 
-        content.setBody(HTML_CONTENT);
+        content.setBody(htmlContent);
         mockServer.enqueue(content);
         mockServer.start();
         testUrl = mockServer.url("/").toString();
