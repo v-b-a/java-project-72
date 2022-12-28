@@ -6,7 +6,6 @@ import hexlet.code.model.query.QUrl;
 import hexlet.code.model.query.QUrlCheck;
 import io.ebean.DB;
 import io.ebean.Database;
-import io.ebean.SqlRow;
 import io.ebean.Transaction;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -33,7 +31,6 @@ public final class AppTest {
     private static String baseUrl;
     private final String verifiedUrl = "https://www.google.ru/webhp?authuser=1";
     private final String normalizedUrl = "https://www.google.ru";
-    static File file = new File("app/src/test/resources/fixtures.html");
     private static String HTML_CONTENT;
     private static String testUrl;
     private static MockWebServer mockServer;
@@ -166,10 +163,15 @@ public final class AppTest {
 
     @Test
     public void testCheck() throws Exception {
-        HttpResponse addCheckListPost = Unirest.post(baseUrl + "/urls").field("url", testUrl).asEmpty();
+        HttpResponse addCheckListPost = Unirest
+                .post(baseUrl + "/urls")
+                .field("url", testUrl)
+                .asEmpty();
 
         URL url = new URL(testUrl);
-        Url dbUrl = new QUrl().name.equalTo(url.getProtocol() + "://" + url.getAuthority()).findOne();
+        Url dbUrl = new QUrl()
+                .name.equalTo(url.getProtocol() + "://" + url.getAuthority())
+                .findOne();
         assertThat(dbUrl).isNotNull();
         assertThat(dbUrl.getName()).isEqualTo(url.getProtocol() + "://" + url.getAuthority());
         HttpResponse checkUrl = Unirest
@@ -190,39 +192,6 @@ public final class AppTest {
         assertThat(dbUrlCheck.getH1()).isEqualTo("some h1");
         assertThat(dbUrlCheck.getTitle()).isEqualTo("some title");
         assertThat(dbUrlCheck.getDescription()).isEqualTo("some description");
-    }
-
-    @Test
-    void testIndex() {
-        SqlRow existingUrl;
-        SqlRow existingUrlCheck;
-
-        String url = "https://en.hexlet.io";
-        String createUrl = String.format(
-                "INSERT INTO url (name, created_at) VALUES ('%s', '2021-09-27 14:20:19.13');",
-                url
-        );
-        DB.sqlUpdate(createUrl).execute();
-        String selectUrl = String.format("SELECT * FROM url WHERE name = '%s';", url);
-        existingUrl = DB.sqlQuery(selectUrl).findOne();
-        String createUrlCheck = String.format(
-                "INSERT INTO url_check (url_id, status_code, title, description, h1, created_at)"
-                        + "VALUES (%s, 200, 'en title', 'en description', 'en h1', '2021-09-27 14:20:19.13');",
-                existingUrl.getString("id")
-        );
-        DB.sqlUpdate(createUrlCheck).execute();
-        String selectUrlCheck = String.format(
-                "SELECT * FROM url_check WHERE url_id = '%s';",
-                existingUrl.getString("id")
-        );
-        existingUrlCheck = DB.sqlQuery(selectUrlCheck).findOne();
-        HttpResponse<String> response = Unirest
-                .get(baseUrl + "/urls")
-                .asString();
-        String body = response.getBody();
-        assertThat(response.getStatus()).isEqualTo(responseCode200);
-        assertThat(body).contains(existingUrl.getString("name"));
-        assertThat(body).contains(existingUrlCheck.getString("status_code"));
     }
 
     @Test

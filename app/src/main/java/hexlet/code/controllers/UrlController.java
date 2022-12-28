@@ -1,5 +1,6 @@
 package hexlet.code.controllers;
 
+import hexlet.code.UrlDto;
 import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
 import hexlet.code.model.query.QUrl;
@@ -59,7 +60,17 @@ public final class UrlController {
                 .orderBy("id")
                 .findPagedList()
                 .getList();
-        ctx.attribute("urls", urlList);
+
+        List<UrlDto> urlDtos = urlList.stream()
+                        .map(url -> {
+                            UrlDto urlDto = new UrlDto();
+                            urlDto.setUrlCheckList(url.getUrlCheckList());
+                            urlDto.setId(url.getId());
+                            urlDto.setName(url.getName());
+                            urlDto.setCreatedAt(url.getCreatedAt());
+                            return urlDto;
+                        }).toList();
+        ctx.attribute("urls", urlDtos);
         ctx.render("list.html");
     };
 

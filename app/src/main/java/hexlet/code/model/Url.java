@@ -3,6 +3,7 @@ package hexlet.code.model;
 import io.ebean.Model;
 import io.ebean.annotation.WhenCreated;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
@@ -17,6 +18,7 @@ import java.util.List;
 @Entity
 @Setter
 @Getter
+@NoArgsConstructor
 public final class Url extends Model {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,18 +35,4 @@ public final class Url extends Model {
     public Url(String url) {
         this.name = url;
     }
-    public Instant getLastCheckDate() {
-        if (!urlCheckList.isEmpty()) {
-            return urlCheckList.get(urlCheckList.size() - 1).getCreatedAt();
-        }
-        return null;
-    }
-    public Integer getLastCheckStatus() {
-        if (!urlCheckList.isEmpty()) {
-            return urlCheckList.get(urlCheckList.size() - 1).getStatusCode();
-        }
-        return null;
-    }
-
-
 }
