@@ -9,7 +9,7 @@ import java.util.List;
 
 @Setter
 @Getter
-public class UrlDto {
+public final class UrlDto {
     private long id;
     private String name;
     private Instant createdAt;

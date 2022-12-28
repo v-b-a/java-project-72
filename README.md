@@ -10,8 +10,7 @@ Page Analyzer is a service that analyzes entered websites for accessibility and 
 You can use it through the web interface -> https://java-project-72-production.up.railway.app/
 
 ### Technologies used in the project:  
-<img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white"/>
-<img src="https://img.shields.io/badge/ebean--orm-green?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white"/> <img src="https://img.shields.io/badge/ebean--orm-green?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white"/>
 <img src="https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white"/>
 <img src="https://img.shields.io/badge/junit-yellowgreen?style=for-the-badge"/>
